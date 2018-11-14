@@ -1,0 +1,3490 @@
+<?xml version="1.0" ?>
+<registry>
+  <comment copyright="true"> /*****************************************************************************\
+*
+*  Module Name    FireRender.h
+*  Project        FireRender Engine
+*
+*  Description    Fire Render Interface header
+*
+*  Copyright 2017 Advanced Micro Devices, Inc.
+*
+*  All rights reserved.  This notice is intended as a precaution against
+*  inadvertent publication and does not imply publication or any waiver
+*  of confidentiality.  The year included in the foregoing notice is the
+*  year of creation of the work.
+*  @author Dmitry Kozlov (dmitry.kozlov@amd.com)
+*  @author Takahiro Harada (takahiro.harada@amd.com)
+*  @bug No known bugs.
+*
+
+
+\*****************************************************************************/
+  </comment>
+  
+  <language_C def="make_unique" />
+  
+  <include file="cstddef" usebrackets="1" />
+  
+  <language_C def="extern_c" />
+  
+  <define name="RPR_API_VERSION" value="0x010032200 "/>
+  <define name="RPR_API_VERSION_MINOR" value="_API_VER_MINOR_ "/>
+
+  <group name ="Status" prefix ="RPR_" type ="rpr_status">
+
+    <define name="RPR_SUCCESS" value="0 "/>
+    <define name="RPR_ERROR_COMPUTE_API_NOT_SUPPORTED" value="-1 "/>
+    <define name="RPR_ERROR_OUT_OF_SYSTEM_MEMORY" value="-2 "/>
+    <define name="RPR_ERROR_OUT_OF_VIDEO_MEMORY" value="-3 "/>
+    <define name="RPR_ERROR_INVALID_LIGHTPATH_EXPR" value="-5 "/>
+    <define name="RPR_ERROR_INVALID_IMAGE" value="-6 "/>
+    <define name="RPR_ERROR_INVALID_AA_METHOD" value="-7 "/>
+    <define name="RPR_ERROR_UNSUPPORTED_IMAGE_FORMAT" value="-8 "/>
+    <define name="RPR_ERROR_INVALID_GL_TEXTURE" value="-9 "/>
+    <define name="RPR_ERROR_INVALID_CL_IMAGE" value="-10 "/>
+    <define name="RPR_ERROR_INVALID_OBJECT" value="-11 "/>
+    <define name="RPR_ERROR_INVALID_PARAMETER" value="-12 "/>
+    <define name="RPR_ERROR_INVALID_TAG" value="-13 "/>
+    <define name="RPR_ERROR_INVALID_LIGHT" value="-14 "/>
+    <define name="RPR_ERROR_INVALID_CONTEXT" value="-15 "/>
+    <define name="RPR_ERROR_UNIMPLEMENTED" value="-16 "/>
+    <define name="RPR_ERROR_INVALID_API_VERSION" value="-17 "/>
+    <define name="RPR_ERROR_INTERNAL_ERROR" value="-18 "/>
+    <define name="RPR_ERROR_IO_ERROR" value="-19 "/>
+    <define name="RPR_ERROR_UNSUPPORTED_SHADER_PARAMETER_TYPE" value="-20 "/>
+    <define name="RPR_ERROR_MATERIAL_STACK_OVERFLOW" value="-21 "/>
+    <define name="RPR_ERROR_INVALID_PARAMETER_TYPE" value="-22 "/>
+    <define name="RPR_ERROR_UNSUPPORTED" value="-23 "/>
+    <define name="RPR_ERROR_OPENCL_OUT_OF_HOST_MEMORY" value="-24 "/>
+    <define name="RPR_ERROR_OPENGL" value="-25 "/>
+    <define name="RPR_ERROR_OPENCL" value="-26 "/>
+    <define name="RPR_ERROR_NULLPTR" value="-27 "/>
+    <define name="RPR_ERROR_NODETYPE" value="-28 "/>
+    <define name="RPR_ERROR_ABORTED" value="-29 "/>
+  </group>
+  <group name ="ParameterType" prefix ="RPR_PARAMETER_TYPE_" type ="rpr_parameter_type">
+    <define name="RPR_PARAMETER_TYPE_FLOAT" value="0x1 "/>
+    <define name="RPR_PARAMETER_TYPE_FLOAT2" value="0x2 "/>
+    <define name="RPR_PARAMETER_TYPE_FLOAT3" value="0x3 "/>
+    <define name="RPR_PARAMETER_TYPE_FLOAT4" value="0x4 "/>
+    <define name="RPR_PARAMETER_TYPE_IMAGE" value="0x5 "/>
+    <define name="RPR_PARAMETER_TYPE_STRING" value="0x6 "/>
+    <define name="RPR_PARAMETER_TYPE_SHADER" value="0x7 "/>
+    <define name="RPR_PARAMETER_TYPE_UINT" value="0x8 "/>
+    <define name="RPR_PARAMETER_TYPE_ULONG" value="0x9 "/>
+    <define name="RPR_PARAMETER_TYPE_LONGLONG" value="0xa "/>
+  </group>
+  <group name ="CreationFlags" prefix="RPR_CREATION_FLAGS_" type ="rpr_creation_flags">
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU0" value="(1 &lt;&lt; 0) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU1" value="(1 &lt;&lt; 1) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU2" value="(1 &lt;&lt; 2) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU3" value="(1 &lt;&lt; 3) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_CPU" value="(1 &lt;&lt; 4) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GL_INTEROP" value="(1 &lt;&lt; 5) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU4" value="(1 &lt;&lt; 6) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU5" value="(1 &lt;&lt; 7) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU6" value="(1 &lt;&lt; 8) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU7" value="(1 &lt;&lt; 9) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_METAL" value="(1 &lt;&lt; 10) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU8" value="(1 &lt;&lt; 11) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU9" value="(1 &lt;&lt; 12) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU10" value="(1 &lt;&lt; 13) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU11" value="(1 &lt;&lt; 14) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU12" value="(1 &lt;&lt; 15) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU13" value="(1 &lt;&lt; 16) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU14" value="(1 &lt;&lt; 17) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_GPU15" value="(1 &lt;&lt; 18) "/>
+    <define name="RPR_CREATION_FLAGS_ENABLE_DEBUG" value="(1 &lt;&lt; 31) "/>
+  </group>
+  <group name ="FilterType" prefix="RPR_FILTER_" type="rpr_aa_filter">
+    <define name="RPR_FILTER_NONE" value="0x0 "/>
+    <define name="RPR_FILTER_BOX" value="0x1 "/>
+    <define name="RPR_FILTER_TRIANGLE" value="0x2 "/>
+    <define name="RPR_FILTER_GAUSSIAN" value="0x3 "/>
+    <define name="RPR_FILTER_MITCHELL" value="0x4 "/>
+    <define name="RPR_FILTER_LANCZOS" value="0x5 "/>
+    <define name="RPR_FILTER_BLACKMANHARRIS" value="0x6 "/>
+  </group>
+  <group name ="ShapeType" prefix="RPR_SHAPE_TYPE_" type="rpr_shape_type">
+    <define name="RPR_SHAPE_TYPE_MESH" value="0x1 "/>
+    <define name="RPR_SHAPE_TYPE_INSTANCE" value="0x2 "/>
+  </group>
+  <group name ="LightType" prefix="RPR_LIGHT_TYPE_" type="rpr_light_type">
+    <define name="RPR_LIGHT_TYPE_POINT" value="0x1 "/>
+    <define name="RPR_LIGHT_TYPE_DIRECTIONAL" value="0x2 "/>
+    <define name="RPR_LIGHT_TYPE_SPOT" value="0x3 "/>
+    <define name="RPR_LIGHT_TYPE_ENVIRONMENT" value="0x4 "/>
+    <define name="RPR_LIGHT_TYPE_SKY" value="0x5 "/>
+    <define name="RPR_LIGHT_TYPE_IES" value="0x6 "/>
+  </group>
+  <comment>/* rpr_object_info */</comment>
+  <define name="RPR_OBJECT_NAME" value="0x777777 " type="rpr_object_info"/>
+  <comment>/* rpr_context_properties */</comment>
+  <define name="RPR_CONTEXT_CREATEPROP_CPU_THREAD_LIMIT" value="0x600 "/>
+  <define name="RPR_CONTEXT_CREATEPROP_COMPILE_CALLBACK" value="0x601 "/>
+  <define name="RPR_CONTEXT_CREATEPROP_COMPILE_USER_DATA" value="0x602 "/>
+  <group name ="ContextInfo" prefix="RPR_CONTEXT_" type="rpr_context_info">
+    <define name="RPR_CONTEXT_CREATION_FLAGS" value="0x102 "/>
+    <define name="RPR_CONTEXT_CACHE_PATH" value="0x103 "/>
+    <define name="RPR_CONTEXT_RENDER_STATUS" value="0x104 "/>
+    <define name="RPR_CONTEXT_RENDER_STATISTICS" value="0x105 "/>
+    <define name="RPR_CONTEXT_DEVICE_COUNT" value="0x106 "/>
+    <define name="RPR_CONTEXT_PARAMETER_COUNT" value="0x107 "/>
+    <define name="RPR_CONTEXT_ACTIVE_PLUGIN" value="0x108 "/>
+    <define name="RPR_CONTEXT_SCENE" value="0x109 "/>
+   <comment>/* #define RPR_CONTEXT_AA_CELL_SIZE 0x10A  -- doesn't exist anymore */</comment>
+   <comment>/* #define RPR_CONTEXT_AA_SAMPLES 0x10B  -- doesn't exist anymore */</comment>
+    <define name="RPR_CONTEXT_ITERATIONS" value="0x10B "/>
+    <define name="RPR_CONTEXT_IMAGE_FILTER_TYPE" value="0x10C "/>
+    <define name="RPR_CONTEXT_IMAGE_FILTER_BOX_RADIUS" value="0x10D "/>
+    <define name="RPR_CONTEXT_IMAGE_FILTER_GAUSSIAN_RADIUS" value="0x10E "/>
+    <define name="RPR_CONTEXT_IMAGE_FILTER_TRIANGLE_RADIUS" value="0x10F "/>
+    <define name="RPR_CONTEXT_IMAGE_FILTER_MITCHELL_RADIUS" value="0x110 "/>
+    <define name="RPR_CONTEXT_IMAGE_FILTER_LANCZOS_RADIUS" value="0x111 "/>
+    <define name="RPR_CONTEXT_IMAGE_FILTER_BLACKMANHARRIS_RADIUS" value="0x112 "/>
+    <define name="RPR_CONTEXT_TONE_MAPPING_TYPE" value="0x113 "/>
+    <define name="RPR_CONTEXT_TONE_MAPPING_LINEAR_SCALE" value="0x114 "/>
+    <define name="RPR_CONTEXT_TONE_MAPPING_PHOTO_LINEAR_SENSITIVITY" value="0x115 "/>
+    <define name="RPR_CONTEXT_TONE_MAPPING_PHOTO_LINEAR_EXPOSURE" value="0x116 "/>
+    <define name="RPR_CONTEXT_TONE_MAPPING_PHOTO_LINEAR_FSTOP" value="0x117 "/>
+    <define name="RPR_CONTEXT_TONE_MAPPING_REINHARD02_PRE_SCALE" value="0x118 "/>
+    <define name="RPR_CONTEXT_TONE_MAPPING_REINHARD02_POST_SCALE" value="0x119 "/>
+    <define name="RPR_CONTEXT_TONE_MAPPING_REINHARD02_BURN" value="0x11A "/>
+    <define name="RPR_CONTEXT_MAX_RECURSION" value="0x11B "/>
+    <define name="RPR_CONTEXT_RAY_CAST_EPISLON" value="0x11C "/>
+    <define name="RPR_CONTEXT_RADIANCE_CLAMP" value="0x11D "/>
+    <define name="RPR_CONTEXT_X_FLIP" value="0x11E "/>
+    <define name="RPR_CONTEXT_Y_FLIP" value="0x11F "/>
+    <define name="RPR_CONTEXT_TEXTURE_GAMMA" value="0x120 "/>
+    <define name="RPR_CONTEXT_PDF_THRESHOLD" value="0x121 "/>
+    <define name="RPR_CONTEXT_RENDER_MODE" value="0x122 "/>
+    <define name="RPR_CONTEXT_ROUGHNESS_CAP" value="0x123 "/>
+    <define name="RPR_CONTEXT_DISPLAY_GAMMA" value="0x124 "/>
+    <define name="RPR_CONTEXT_MATERIAL_STACK_SIZE" value="0x125 "/>
+    <define name="RPR_CONTEXT_CLIPPING_PLANE" value="0x126 "/>
+    <define name="RPR_CONTEXT_GPU0_NAME" value="0x127 "/>
+    <define name="RPR_CONTEXT_GPU1_NAME" value="0x128 "/>
+    <define name="RPR_CONTEXT_GPU2_NAME" value="0x129 "/>
+    <define name="RPR_CONTEXT_GPU3_NAME" value="0x12A "/>
+    <define name="RPR_CONTEXT_CPU_NAME" value="0x12B "/>
+    <define name="RPR_CONTEXT_GPU4_NAME" value="0x12C "/>
+    <define name="RPR_CONTEXT_GPU5_NAME" value="0x12D "/>
+    <define name="RPR_CONTEXT_GPU6_NAME" value="0x12E "/>
+    <define name="RPR_CONTEXT_GPU7_NAME" value="0x12F "/>
+    <define name="RPR_CONTEXT_TONE_MAPPING_EXPONENTIAL_INTENSITY" value="0x130 "/>
+    <define name="RPR_CONTEXT_FRAMECOUNT" value="0x131 "/>
+    <define name="RPR_CONTEXT_TEXTURE_COMPRESSION" value="0x132 "/>
+    <define name="RPR_CONTEXT_AO_RAY_LENGTH" value="0x133 "/>
+    <define name="RPR_CONTEXT_OOC_TEXTURE_CACHE" value="0x134 "/>
+    <define name="RPR_CONTEXT_PREVIEW" value="0x135 "/>
+    <define name="RPR_CONTEXT_CPU_THREAD_LIMIT" value="0x136 "/>
+    <define name="RPR_CONTEXT_LAST_ERROR_MESSAGE" value="0x137 "/>
+    <define name="RPR_CONTEXT_MAX_DEPTH_DIFFUSE" value="0x138 "/>
+    <define name="RPR_CONTEXT_MAX_DEPTH_GLOSSY" value="0x139 "/>
+    <define name="RPR_CONTEXT_OOC_CACHE_PATH" value="0x13a "/>
+    <define name="RPR_CONTEXT_MAX_DEPTH_REFRACTION" value="0x13B "/>
+    <define name="RPR_CONTEXT_MAX_DEPTH_GLOSSY_REFRACTION" value="0x13C "/>
+     <define name="RPR_CONTEXT_RENDER_LAYER_MASK" value="0x13D "/>
+     <define name="RPR_CONTEXT_SINGLE_LEVEL_BVH_ENABLED" value="0x13E "/>
+     <define name="RPR_CONTEXT_TRANSPARENT_BACKGROUND" value="0x13F "/>
+     <define name="RPR_CONTEXT_MAX_DEPTH_SHADOW" value="0x140 "/>
+     <define name="RPR_CONTEXT_API_VERSION" value="0x141 "/>
+    <define name="RPR_CONTEXT_GPU8_NAME" value="0x142 "/>
+    <define name="RPR_CONTEXT_GPU9_NAME" value="0x143 "/>
+    <define name="RPR_CONTEXT_GPU10_NAME" value="0x144 "/>
+    <define name="RPR_CONTEXT_GPU11_NAME" value="0x145 "/>
+    <define name="RPR_CONTEXT_GPU12_NAME" value="0x146 "/>
+    <define name="RPR_CONTEXT_GPU13_NAME" value="0x147 "/>
+    <define name="RPR_CONTEXT_GPU14_NAME" value="0x148 "/>
+    <define name="RPR_CONTEXT_GPU15_NAME" value="0x149 "/>
+    <define name="RPR_CONTEXT_API_VERSION_MINOR" value="0x14A "/>
+    <define name="RPR_CONTEXT_METAL_PERFORMANCE_SHADER" value="0x14B "/>
+    <define name="RPR_CONTEXT_USER_TEXTURE_0" value="0x14C "/>
+    <define name="RPR_CONTEXT_USER_TEXTURE_1" value="0x14D "/>
+    <define name="RPR_CONTEXT_USER_TEXTURE_2" value="0x14E "/>
+    <define name="RPR_CONTEXT_USER_TEXTURE_3" value="0x14F "/>
+    <define name="RPR_CONTEXT_MIPMAP_LOD_OFFSET" value="0x150 "/>
+    
+  </group>
+  <comment>/* last of the RPR_CONTEXT_* */</comment>
+  <define name="RPR_CONTEXT_MAX" value="0x151 "/>
+
+
+	
+
+
+
+
+  
+  
+  <group name ="CameraInfo" prefix="RPR_CAMERA_" type="rpr_camera_info">
+    <define name="RPR_CAMERA_TRANSFORM" value="0x201 "/>
+    <define name="RPR_CAMERA_FSTOP" value="0x202 "/>
+    <define name="RPR_CAMERA_APERTURE_BLADES" value="0x203 "/>
+    <define name="RPR_CAMERA_RESPONSE" value="0x204 "/>
+    <define name="RPR_CAMERA_EXPOSURE" value="0x205 "/>
+    <define name="RPR_CAMERA_FOCAL_LENGTH" value="0x206 "/>
+    <define name="RPR_CAMERA_SENSOR_SIZE" value="0x207 "/>
+    <define name="RPR_CAMERA_MODE" value="0x208 "/>
+    <define name="RPR_CAMERA_ORTHO_WIDTH" value="0x209 "/>
+    <define name="RPR_CAMERA_ORTHO_HEIGHT" value="0x20A "/>
+    <define name="RPR_CAMERA_FOCUS_DISTANCE" value="0x20B "/>
+    <define name="RPR_CAMERA_POSITION" value="0x20C "/>
+    <define name="RPR_CAMERA_LOOKAT" value="0x20D "/>
+    <define name="RPR_CAMERA_UP" value="0x20E "/>
+    <define name="RPR_CAMERA_FOCAL_TILT" value="0x20F "/>
+    <define name="RPR_CAMERA_LENS_SHIFT" value="0x210 "/>
+    <define name="RPR_CAMERA_IPD" value="0x211 "/>
+    <define name="RPR_CAMERA_TILT_CORRECTION" value="0x212 "/>
+    <define name="RPR_CAMERA_NEAR_PLANE" value="0x213 "/>
+    <define name="RPR_CAMERA_FAR_PLANE" value="0x214 "/>
+    <define name="RPR_CAMERA_LINEAR_MOTION" value="0x215 "/>
+    <define name="RPR_CAMERA_ANGULAR_MOTION" value="0x216 "/>
+  </group>
+  
+  <group name ="ImageInfo" prefix="RPR_IMAGE_" type="rpr_image_info">
+    <define name="RPR_IMAGE_FORMAT" value="0x301 "/>
+    <define name="RPR_IMAGE_DESC" value="0x302 "/>
+    <define name="RPR_IMAGE_DATA" value="0x303 "/>
+    <define name="RPR_IMAGE_DATA_SIZEBYTE" value="0x304 "/>
+    <define name="RPR_IMAGE_WRAP" value="0x305 "/>
+    <define name="RPR_IMAGE_FILTER" value="0x306 "/>
+	<define name="RPR_IMAGE_GAMMA" value="0x307 "/>
+	<define name="RPR_IMAGE_MIPMAP_ENABLED" value="0x308 "/>
+  </group>
+
+  <group name ="Buffer" prefix="RPR_BUFFER_" type="rpr_buffer_info">
+    <define name="RPR_BUFFER_DESC" value="0x350 "/>
+    <define name="RPR_BUFFER_DATA" value="0x351 "/>
+  </group>
+
+
+  <group name ="ShapeInfo" prefix="RPR_SHAPE_" type="rpr_shape_info">
+    <define name="RPR_SHAPE_TYPE" value="0x401 "/>
+    <define name="RPR_SHAPE_VIDMEM_USAGE" value="0x402 "/>
+    <define name="RPR_SHAPE_TRANSFORM" value="0x403 "/>
+    <define name="RPR_SHAPE_MATERIAL" value="0x404 "/>
+    <define name="RPR_SHAPE_LINEAR_MOTION" value="0x405 "/>
+    <define name="RPR_SHAPE_ANGULAR_MOTION" value="0x406 "/>
+    <define name="RPR_SHAPE_SHADOW_FLAG" value="0x408"/>
+    <define name="RPR_SHAPE_SUBDIVISION_FACTOR" value="0x409 "/>
+    <define name="RPR_SHAPE_DISPLACEMENT_SCALE" value="0x40A "/>
+    <define name="RPR_SHAPE_SHADOW_CATCHER_FLAG" value="0x40E "/>
+    <define name="RPR_SHAPE_VOLUME_MATERIAL" value="0x40F "/>
+    <define name="RPR_SHAPE_OBJECT_GROUP_ID" value="0x410 "/>
+    <define name="RPR_SHAPE_SUBDIVISION_CREASEWEIGHT" value="0x411 "/>
+    <define name="RPR_SHAPE_SUBDIVISION_BOUNDARYINTEROP" value="0x412 "/>
+    <define name="RPR_SHAPE_DISPLACEMENT_MATERIAL" value="0x413 "/>
+    <define name="RPR_SHAPE_MATERIALS_PER_FACE" value="0x415 "/>
+    <define name="RPR_SHAPE_SCALE_MOTION" value="0x416 "/>
+    <define name="RPR_SHAPE_HETERO_VOLUME" value="0x417 "/>
+    <define name="RPR_SHAPE_LAYER_MASK" value="0x418 "/>
+    <define name="RPR_SHAPE_VISIBILITY_PRIMARY_ONLY_FLAG" value="0x40C "/>
+    <define name="RPR_SHAPE_VISIBILITY_SHADOW" value="0x41A "/>
+    <define name="RPR_SHAPE_VISIBILITY_REFLECTION" value="0x41B "/>
+    <define name="RPR_SHAPE_VISIBILITY_REFRACTION" value="0x41C "/>
+    <define name="RPR_SHAPE_VISIBILITY_TRANSPARENT" value="0x41D "/>
+    <define name="RPR_SHAPE_VISIBILITY_DIFFUSE" value="0x41E "/>
+    <define name="RPR_SHAPE_VISIBILITY_GLOSSY_REFLECTION" value="0x41F "/>
+    <define name="RPR_SHAPE_VISIBILITY_GLOSSY_REFRACTION" value="0x420 "/>
+    <define name="RPR_SHAPE_VISIBILITY_LIGHT" value="0x421 "/>
+    <define name="RPR_SHAPE_LIGHT_GROUP_ID" value="0x422 "/>
+  </group>
+
+  <group name ="Mesh" prefix="RPR_MESH_" type="rpr_mesh_info">
+    <define name="RPR_MESH_POLYGON_COUNT" value="0x501 "/>
+    <define name="RPR_MESH_VERTEX_COUNT" value="0x502 "/>
+    <define name="RPR_MESH_NORMAL_COUNT" value="0x503 "/>
+    <define name="RPR_MESH_UV_COUNT" value="0x504 "/>
+    <define name="RPR_MESH_VERTEX_ARRAY" value="0x505 "/>
+    <define name="RPR_MESH_NORMAL_ARRAY" value="0x506 "/>
+    <define name="RPR_MESH_UV_ARRAY" value="0x507 "/>
+    <define name="RPR_MESH_VERTEX_INDEX_ARRAY" value="0x508 "/>
+    <define name="RPR_MESH_NORMAL_INDEX_ARRAY" value="0x509 "/>
+    <define name="RPR_MESH_UV_INDEX_ARRAY" value="0x50A "/>
+    <define name="RPR_MESH_VERTEX_STRIDE" value="0x50C "/>
+    <define name="RPR_MESH_NORMAL_STRIDE" value="0x50D "/>
+    <define name="RPR_MESH_UV_STRIDE" value="0x50E "/>
+    <define name="RPR_MESH_VERTEX_INDEX_STRIDE" value="0x50F "/>
+    <define name="RPR_MESH_NORMAL_INDEX_STRIDE" value="0x510 "/>
+    <define name="RPR_MESH_UV_INDEX_STRIDE" value="0x511 "/>
+    <define name="RPR_MESH_NUM_FACE_VERTICES_ARRAY" value="0x512 "/>
+    <define name="RPR_MESH_UV2_COUNT" value="0x513 "/>
+    <define name="RPR_MESH_UV2_ARRAY" value="0x514 "/>
+    <define name="RPR_MESH_UV2_INDEX_ARRAY" value="0x515 "/>
+    <define name="RPR_MESH_UV2_STRIDE" value="0x516 "/>
+    <define name="RPR_MESH_UV2_INDEX_STRIDE" value="0x517 "/>
+    <define name="RPR_MESH_UV_DIM" value="0x518 "/>
+  </group>
+  <group name ="Scene" prefix="RPR_SCENE_" type="rpr_scene_info">
+    <define name="RPR_SCENE_SHAPE_COUNT" value="0x701 "/>
+    <define name="RPR_SCENE_LIGHT_COUNT" value="0x702 "/>
+    <define name="RPR_SCENE_SHAPE_LIST" value="0x704 "/>
+    <define name="RPR_SCENE_LIGHT_LIST" value="0x705 "/>
+    <define name="RPR_SCENE_CAMERA" value="0x706 "/>
+    <define name="RPR_SCENE_BACKGROUND_IMAGE" value="0x708 "/>
+    <define name="RPR_SCENE_ENVIRONMENT_OVERRIDE_REFLECTION" value="0x709 "/>
+    <define name="RPR_SCENE_ENVIRONMENT_OVERRIDE_REFRACTION" value="0x70A "/>
+    <define name="RPR_SCENE_ENVIRONMENT_OVERRIDE_TRANSPARENCY" value="0x70B "/>
+    <define name="RPR_SCENE_ENVIRONMENT_OVERRIDE_BACKGROUND" value="0x70C "/>
+    <define name="RPR_SCENE_AABB" value="0x70D "/>
+    <define name="RPR_SCENE_HETEROVOLUME_LIST" value="0x70E "/>
+    <define name="RPR_SCENE_HETEROVOLUME_COUNT" value="0x70F "/>
+    <define name="RPR_SCENE_CURVE_LIST" value="0x710 "/>
+    <define name="RPR_SCENE_CURVE_COUNT" value="0x711 "/>
+  </group>
+  
+  <group name ="Lut" prefix="RPR_" type="rpr_lut_info">
+    <define name="RPR_LUT_FILENAME" value="0x850 "/>
+    <define name="RPR_LUT_DATA" value="0x851 "/>
+  </group>
+  
+  <group name ="Light" prefix="RPR_" type="rpr_light_info">
+    <define name="RPR_LIGHT_TYPE" value="0x801 "/>
+    <define name="RPR_LIGHT_TRANSFORM" value="0x803 "/>
+    <define name="RPR_LIGHT_GROUP_ID" value="0x805 "/>
+    <comment>/* rpr_light_info - point light */</comment>
+    <define name="RPR_POINT_LIGHT_RADIANT_POWER" value="0x804 "/>
+    <comment>/* rpr_light_info - directional light */</comment>
+    <define name="RPR_DIRECTIONAL_LIGHT_RADIANT_POWER" value="0x808 "/>
+    <define name="RPR_DIRECTIONAL_LIGHT_SHADOW_SOFTNESS" value="0x809 "/>
+    <comment>/* rpr_light_info - spot light */</comment>
+    <define name="RPR_SPOT_LIGHT_RADIANT_POWER" value="0x80B "/>
+    <define name="RPR_SPOT_LIGHT_CONE_SHAPE" value="0x80C "/>
+    <comment>/* rpr_light_info - environment light */</comment>
+    <define name="RPR_ENVIRONMENT_LIGHT_IMAGE" value="0x80F "/>
+    <define name="RPR_ENVIRONMENT_LIGHT_INTENSITY_SCALE" value="0x810 "/>
+    <define name="RPR_ENVIRONMENT_LIGHT_PORTAL_LIST" value="0x818 "/>
+    <define name="RPR_ENVIRONMENT_LIGHT_PORTAL_COUNT" value="0x819 "/>
+    <comment>/* rpr_light_info - sky light */</comment>
+    <define name="RPR_SKY_LIGHT_TURBIDITY" value="0x812 "/>
+    <define name="RPR_SKY_LIGHT_ALBEDO" value="0x813 "/>
+    <define name="RPR_SKY_LIGHT_SCALE" value="0x814 "/>
+    <define name="RPR_SKY_LIGHT_DIRECTION" value="0x815 "/>
+    <define name="RPR_SKY_LIGHT_PORTAL_LIST" value="0x820 "/>
+    <define name="RPR_SKY_LIGHT_PORTAL_COUNT" value="0x821 "/>
+    <comment>/* rpr_light_info - IES light */</comment>
+    <define name="RPR_IES_LIGHT_RADIANT_POWER" value="0x816 "/>
+    <define name="RPR_IES_LIGHT_IMAGE_DESC" value="0x817 "/>
+  </group>
+  <group name ="Parameter" prefix="RPR_PARAMETER_" type="rpr_parameter_info">
+    <define name="RPR_PARAMETER_NAME" value="0x1201 "/>
+    <define name="RPR_PARAMETER_NAME_STRING" value="0x1202 "/>
+    <define name="RPR_PARAMETER_TYPE" value="0x1203 "/>
+    <define name="RPR_PARAMETER_DESCRIPTION" value="0x1204 "/>
+    <define name="RPR_PARAMETER_VALUE" value="0x1205 "/>
+  </group>
+  <group name ="FrameBuffer" prefix="RPR_FRAMEBUFFER_" type="rpr_framebuffer_info">
+    <define name="RPR_FRAMEBUFFER_FORMAT" value="0x1301 "/>
+    <define name="RPR_FRAMEBUFFER_DESC" value="0x1302 "/>
+    <define name="RPR_FRAMEBUFFER_DATA" value="0x1303 "/>
+    <define name="RPR_FRAMEBUFFER_GL_TARGET" value="0x1304 "/>
+    <define name="RPR_FRAMEBUFFER_GL_MIPLEVEL" value="0x1305 "/>
+    <define name="RPR_FRAMEBUFFER_GL_TEXTURE" value="0x1306 "/>
+  </group>
+  <group name ="Polygon" prefix="RPR_MESH_POLYGON_VERTEX_" type="rpr_mesh_polygon_info">
+    <define name="RPR_MESH_POLYGON_VERTEX_COUNT" value="0x1401 "/>
+    <comment>/* rpr_mesh_polygon_vertex_info */</comment>
+    <define name="RPR_MESH_POLYGON_VERTEX_POSITION" value="0x1501 "/>
+    <define name="RPR_MESH_POLYGON_VERTEX_NORMAL" value="0x1502 "/>
+    <define name="RPR_MESH_POLYGON_VERTEX_TEXCOORD" value="0x1503 "/>
+  </group>
+  <comment>/* rpr_instance_info */</comment>
+  <define name="RPR_INSTANCE_PARENT_SHAPE" value="0x1601 "/>
+  <group name ="ComponentType" prefix="RPR_COMPONENT_TYPE_" type="rpr_component_type">
+    <define name="RPR_COMPONENT_TYPE_UINT8" value="0x1 "/>
+    <define name="RPR_COMPONENT_TYPE_FLOAT16" value="0x2 "/>
+    <define name="RPR_COMPONENT_TYPE_FLOAT32" value="0x3 "/>
+  </group>
+  <group name ="BufferElementType"  prefix="RPR_BUFFER_ELEMENT_TYPE_" type="rpr_buffer_element_type">
+    <define name="RPR_BUFFER_ELEMENT_TYPE_INT32" value="0x1 "/>
+    <define name="RPR_BUFFER_ELEMENT_TYPE_FLOAT32" value="0x2 "/>
+  </group>
+  <group name ="RenderMode" prefix="RPR_RENDER_MODE_" type="rpr_render_mode">
+    <define name="RPR_RENDER_MODE_GLOBAL_ILLUMINATION" value="0x1 "/>
+    <define name="RPR_RENDER_MODE_DIRECT_ILLUMINATION" value="0x2 "/>
+    <define name="RPR_RENDER_MODE_DIRECT_ILLUMINATION_NO_SHADOW" value="0x3 "/>
+    <define name="RPR_RENDER_MODE_WIREFRAME" value="0x4 "/>
+    <define name="RPR_RENDER_MODE_MATERIAL_INDEX" value="0x5 "/>
+    <define name="RPR_RENDER_MODE_POSITION" value="0x6 "/>
+    <define name="RPR_RENDER_MODE_NORMAL" value="0x7 "/>
+    <define name="RPR_RENDER_MODE_TEXCOORD" value="0x8 "/>
+    <define name="RPR_RENDER_MODE_AMBIENT_OCCLUSION" value="0x9 "/>
+    <define name="RPR_RENDER_MODE_DIFFUSE" value="0x0a "/>
+  </group>
+  <group name ="CameraMode" prefix="RPR_CAMERA_MODE_" type="rpr_camera_mode">
+    <define name="RPR_CAMERA_MODE_PERSPECTIVE" value="0x1 "/>
+    <define name="RPR_CAMERA_MODE_ORTHOGRAPHIC" value="0x2 "/>
+    <define name="RPR_CAMERA_MODE_LATITUDE_LONGITUDE_360" value="0x3 "/>
+    <define name="RPR_CAMERA_MODE_LATITUDE_LONGITUDE_STEREO" value="0x4 "/>
+    <define name="RPR_CAMERA_MODE_CUBEMAP" value="0x5 "/>
+    <define name="RPR_CAMERA_MODE_CUBEMAP_STEREO" value="0x6 "/>
+    <define name="RPR_CAMERA_MODE_FISHEYE" value="0x7 "/>
+  </group>
+  <group name ="ToneMappingOperator" prefix="RPR_TONEMAPPING_OPERATOR_" type="rpr_tonemapping_operator">
+    <define name="RPR_TONEMAPPING_OPERATOR_NONE" value="0x0 "/>
+    <define name="RPR_TONEMAPPING_OPERATOR_LINEAR" value="0x1 "/>
+    <define name="RPR_TONEMAPPING_OPERATOR_PHOTOLINEAR" value="0x2 "/>
+    <define name="RPR_TONEMAPPING_OPERATOR_AUTOLINEAR" value="0x3 "/>
+    <define name="RPR_TONEMAPPING_OPERATOR_MAXWHITE" value="0x4 "/>
+    <define name="RPR_TONEMAPPING_OPERATOR_REINHARD02" value="0x5 "/>
+    <define name="RPR_TONEMAPPING_OPERATOR_EXPONENTIAL" value="0x6 "/>
+  </group>
+  <group name ="VolumeType" prefix="RPR_VOLUME_TYPE_" type="rpr_volume_type">
+    <define name="RPR_VOLUME_TYPE_NONE" value="0xFFFF "/>
+    <define name="RPR_VOLUME_TYPE_HOMOGENEOUS" value="0x0 "/>
+    <define name="RPR_VOLUME_TYPE_HETEROGENEOUS" value="0x1 "/>
+  </group>
+  <group name ="MaterialNodeInfo" prefix="RPR_MATERIAL_NODE_" type="rpr_material_node_info">
+    <define name="RPR_MATERIAL_NODE_TYPE" value="0x1101 "/>
+    <define name="RPR_MATERIAL_NODE_SYSTEM" value="0x1102 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_COUNT" value="0x1103 "/>
+  </group>
+  <group name ="MaterialNodeInput" prefix="RPR_MATERIAL_NODE_INPUT_" type="rpr_material_node_input_info">
+    <define name="RPR_MATERIAL_NODE_INPUT_NAME" value="0x1103 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_NAME_STRING" value="0x1104 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_DESCRIPTION" value="0x1105 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_VALUE" value="0x1106 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_TYPE" value="0x1107 "/>
+  </group>
+  <group name ="MaterialNodeType" prefix="RPR_MATERIAL_NODE_" type="rpr_material_node_type">
+    <define name="RPR_MATERIAL_NODE_DIFFUSE" value="0x1 "/>
+    <define name="RPR_MATERIAL_NODE_MICROFACET" value="0x2 "/>
+    <define name="RPR_MATERIAL_NODE_REFLECTION" value="0x3 "/>
+    <define name="RPR_MATERIAL_NODE_REFRACTION" value="0x4 "/>
+    <define name="RPR_MATERIAL_NODE_MICROFACET_REFRACTION" value="0x5 "/>
+    <define name="RPR_MATERIAL_NODE_TRANSPARENT" value="0x6 "/>
+    <define name="RPR_MATERIAL_NODE_EMISSIVE" value="0x7 "/>
+    <define name="RPR_MATERIAL_NODE_WARD" value="0x8 "/>
+    <define name="RPR_MATERIAL_NODE_ADD" value="0x9 "/>
+    <define name="RPR_MATERIAL_NODE_BLEND" value="0xA "/>
+    <define name="RPR_MATERIAL_NODE_ARITHMETIC" value="0xB "/>
+    <define name="RPR_MATERIAL_NODE_FRESNEL" value="0xC "/>
+    <define name="RPR_MATERIAL_NODE_NORMAL_MAP" value="0xD "/>
+    <define name="RPR_MATERIAL_NODE_IMAGE_TEXTURE" value="0xE "/>
+    <define name="RPR_MATERIAL_NODE_NOISE2D_TEXTURE" value="0xF "/>
+    <define name="RPR_MATERIAL_NODE_DOT_TEXTURE" value="0x10 "/>
+    <define name="RPR_MATERIAL_NODE_GRADIENT_TEXTURE" value="0x11 "/>
+    <define name="RPR_MATERIAL_NODE_CHECKER_TEXTURE" value="0x12 "/>
+    <define name="RPR_MATERIAL_NODE_CONSTANT_TEXTURE" value="0x13 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_LOOKUP" value="0x14 "/>
+    <define name="RPR_MATERIAL_NODE_STANDARD" value="0x15 "/>
+    <define name="RPR_MATERIAL_NODE_BLEND_VALUE" value="0x16 "/>
+    <define name="RPR_MATERIAL_NODE_PASSTHROUGH" value="0x17 "/>
+    <define name="RPR_MATERIAL_NODE_ORENNAYAR" value="0x18 "/>
+    <define name="RPR_MATERIAL_NODE_FRESNEL_SCHLICK" value="0x19 "/>
+    <define name="RPR_MATERIAL_NODE_DIFFUSE_REFRACTION" value="0x1B "/>
+    <define name="RPR_MATERIAL_NODE_BUMP_MAP" value="0x1C "/>
+    <define name="RPR_MATERIAL_NODE_VOLUME" value="0x1D "/>
+    <define name="RPR_MATERIAL_NODE_MICROFACET_ANISOTROPIC_REFLECTION" value="0x1E "/>
+    <define name="RPR_MATERIAL_NODE_MICROFACET_ANISOTROPIC_REFRACTION" value="0x1F "/>
+    <define name="RPR_MATERIAL_NODE_TWOSIDED" value="0x20 "/>
+    <define name="RPR_MATERIAL_NODE_UV_PROCEDURAL" value="0x21 "/>
+    <define name="RPR_MATERIAL_NODE_MICROFACET_BECKMANN" value="0x22 "/>
+    <define name="RPR_MATERIAL_NODE_PHONG" value="0x23 "/>
+    <define name="RPR_MATERIAL_NODE_BUFFER_SAMPLER" value="0x24 "/>
+    <define name="RPR_MATERIAL_NODE_UV_TRIPLANAR" value="0x25 "/>
+   <define name="RPR_MATERIAL_NODE_AO_MAP" value="0x26 "/>
+   <define name="RPR_MATERIAL_NODE_USER_TEXTURE_0" value="0x27 "/>
+   <define name="RPR_MATERIAL_NODE_USER_TEXTURE_1" value="0x28 "/>
+   <define name="RPR_MATERIAL_NODE_USER_TEXTURE_2" value="0x29 "/>
+   <define name="RPR_MATERIAL_NODE_USER_TEXTURE_3" value="0x2a "/>
+  </group>
+  
+  <group name ="MaterialInput" prefix="RPR_MATERIAL_INPUT_" type="rpr_material_node_input">
+    <define name="RPR_MATERIAL_INPUT_COLOR" value="0x0 "/>
+    <define name="RPR_MATERIAL_INPUT_COLOR0" value="0x1 "/>
+    <define name="RPR_MATERIAL_INPUT_COLOR1" value="0x2 "/>
+    <define name="RPR_MATERIAL_INPUT_NORMAL" value="0x3 "/>
+    <define name="RPR_MATERIAL_INPUT_UV" value="0x4 "/>
+    <define name="RPR_MATERIAL_INPUT_DATA" value="0x5 "/>
+    <define name="RPR_MATERIAL_INPUT_ROUGHNESS" value="0x6 "/>
+    <define name="RPR_MATERIAL_INPUT_IOR" value="0x7 "/>
+    <define name="RPR_MATERIAL_INPUT_ROUGHNESS_X" value="0x8 "/>
+    <define name="RPR_MATERIAL_INPUT_ROUGHNESS_Y" value="0x9 "/>
+    <define name="RPR_MATERIAL_INPUT_ROTATION" value="0xA "/>
+    <define name="RPR_MATERIAL_INPUT_WEIGHT" value="0xB "/>
+    <define name="RPR_MATERIAL_INPUT_OP" value="0xC "/>
+    <define name="RPR_MATERIAL_INPUT_INVEC" value="0xD "/>
+    <define name="RPR_MATERIAL_INPUT_UV_SCALE" value="0xE "/>
+    <define name="RPR_MATERIAL_INPUT_VALUE" value="0xF "/>
+    <define name="RPR_MATERIAL_INPUT_REFLECTANCE" value="0x10 "/>
+    <define name="RPR_MATERIAL_INPUT_SCALE" value="0x11 "/>
+    <define name="RPR_MATERIAL_INPUT_SCATTERING" value="0x12 "/>
+    <define name="RPR_MATERIAL_INPUT_ABSORBTION" value="0x13 "/>
+    <define name="RPR_MATERIAL_INPUT_EMISSION" value="0x14 "/>
+    <define name="RPR_MATERIAL_INPUT_G" value="0x15 "/>
+    <define name="RPR_MATERIAL_INPUT_MULTISCATTER" value="0x16 "/>
+    <define name="RPR_MATERIAL_INPUT_COLOR2" value="0x17 "/>
+    <define name="RPR_MATERIAL_INPUT_COLOR3" value="0x18 "/>
+    <define name="RPR_MATERIAL_INPUT_ANISOTROPIC" value="0x19 "/>
+    <define name="RPR_MATERIAL_INPUT_FRONTFACE" value="0x1a "/>
+    <define name="RPR_MATERIAL_INPUT_BACKFACE" value="0x1b "/>
+    <define name="RPR_MATERIAL_INPUT_ORIGIN" value="0x1c "/>
+    <define name="RPR_MATERIAL_INPUT_ZAXIS" value="0x1d "/>
+    <define name="RPR_MATERIAL_INPUT_XAXIS" value="0x1e "/>
+    <define name="RPR_MATERIAL_INPUT_THRESHOLD" value="0x1f "/>
+    <define name="RPR_MATERIAL_INPUT_OFFSET" value="0x20 "/>
+    <define name="RPR_MATERIAL_INPUT_UV_TYPE" value="0x21 "/>
+    <define name="RPR_MATERIAL_INPUT_RADIUS" value="0x22 "/>
+    <define name="RPR_MATERIAL_INPUT_SIDE" value="0x23 "/>
+    <define name="RPR_MATERIAL_INPUT_CAUSTICS" value="0x24 "/>
+    <define name="RPR_MATERIAL_INPUT_TRANSMISSION_COLOR" value="0x25 "/>
+    <define name="RPR_MATERIAL_INPUT_THICKNESS" value="0x26 "/>
+    <define name="RPR_MATERIAL_INPUT_0" value="0x27 "/>
+    <define name="RPR_MATERIAL_INPUT_1" value="0x28 "/>
+    <define name="RPR_MATERIAL_INPUT_2" value="0x29 "/>
+    <define name="RPR_MATERIAL_INPUT_3" value="0x2a "/>
+    <define name="RPR_MATERIAL_INPUT_4" value="0x2b "/>
+    <define name="RPR_MATERIAL_INPUT_MAX" value="0x2c "/>
+  </group>
+  <group name ="MaterialStandardInput" prefix="RPR_MATERIAL_STANDARD_INPUT_" type="rpr_material_node_input">
+    <define name="RPR_MATERIAL_STANDARD_INPUT_DIFFUSE_COLOR" value="0x112 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_DIFFUSE_NORMAL" value="0x113 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_GLOSSY_COLOR" value="0x114 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_GLOSSY_NORMAL" value="0x115 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_GLOSSY_ROUGHNESS_X" value="0x116 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_CLEARCOAT_COLOR" value="0x117 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_CLEARCOAT_NORMAL" value="0x118 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_REFRACTION_COLOR" value="0x119 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_REFRACTION_NORMAL" value="0x11A "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_REFRACTION_IOR" value="0x11C "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_DIFFUSE_TO_REFRACTION_WEIGHT" value="0x11D "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_GLOSSY_TO_DIFFUSE_WEIGHT" value="0x11E "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_CLEARCOAT_TO_GLOSSY_WEIGHT" value="0x11F "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_TRANSPARENCY" value="0x120 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_TRANSPARENCY_COLOR" value="0x121 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_REFRACTION_ROUGHNESS" value="0x122 "/>
+    <define name="RPR_MATERIAL_STANDARD_INPUT_GLOSSY_ROUGHNESS_Y" value="0x123 "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_METALLIC" value="0x901 "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_ROUGHNESS" value="0x902 "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_SUBSURFACE" value="0x903 "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_ANISOTROPIC" value="0x904 "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_SPECULAR" value="0x905 "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_SPECULARTINT" value="0x906 "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_SHEEN" value="0x907 "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_SHEENTINT" value="0x908 "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_CLEARCOAT" value="0x90A "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_CLEARCOATGLOSS" value="0x90B "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_COLOR" value="0x90C "/>
+    <define name="RPR_MATERIAL_INPUT_RASTER_NORMAL" value="0x90D "/>
+  </group>
+  <group name ="MaterialNodeOp" prefix="RPR_MATERIAL_NODE_OP_"  type="rpr_material_node_arithmetic_operation">
+    <define name="RPR_MATERIAL_NODE_OP_ADD" value="0x00 "/>
+    <define name="RPR_MATERIAL_NODE_OP_SUB" value="0x01 "/>
+    <define name="RPR_MATERIAL_NODE_OP_MUL" value="0x02 "/>
+    <define name="RPR_MATERIAL_NODE_OP_DIV" value="0x03 "/>
+    <define name="RPR_MATERIAL_NODE_OP_SIN" value="0x04 "/>
+    <define name="RPR_MATERIAL_NODE_OP_COS" value="0x05 "/>
+    <define name="RPR_MATERIAL_NODE_OP_TAN" value="0x06 "/>
+    <define name="RPR_MATERIAL_NODE_OP_SELECT_X" value="0x07 "/>
+    <define name="RPR_MATERIAL_NODE_OP_SELECT_Y" value="0x08 "/>
+    <define name="RPR_MATERIAL_NODE_OP_SELECT_Z" value="0x09 "/>
+    <define name="RPR_MATERIAL_NODE_OP_COMBINE" value="0x0A "/>
+    <define name="RPR_MATERIAL_NODE_OP_DOT3" value="0x0B "/>
+    <define name="RPR_MATERIAL_NODE_OP_CROSS3" value="0x0C "/>
+    <define name="RPR_MATERIAL_NODE_OP_LENGTH3" value="0x0D "/>
+    <define name="RPR_MATERIAL_NODE_OP_NORMALIZE3" value="0x0E "/>
+    <define name="RPR_MATERIAL_NODE_OP_POW" value="0x0F "/>
+    <define name="RPR_MATERIAL_NODE_OP_ACOS" value="0x10 "/>
+    <define name="RPR_MATERIAL_NODE_OP_ASIN" value="0x11 "/>
+    <define name="RPR_MATERIAL_NODE_OP_ATAN" value="0x12 "/>
+    <define name="RPR_MATERIAL_NODE_OP_AVERAGE_XYZ" value="0x13 "/>
+    <define name="RPR_MATERIAL_NODE_OP_AVERAGE" value="0x14 "/>
+    <define name="RPR_MATERIAL_NODE_OP_MIN" value="0x15 "/>
+    <define name="RPR_MATERIAL_NODE_OP_MAX" value="0x16 "/>
+    <define name="RPR_MATERIAL_NODE_OP_FLOOR" value="0x17 "/>
+    <define name="RPR_MATERIAL_NODE_OP_MOD" value="0x18 "/>
+    <define name="RPR_MATERIAL_NODE_OP_ABS" value="0x19 "/>
+    <define name="RPR_MATERIAL_NODE_OP_SHUFFLE_YZWX" value="0x1a "/>
+    <define name="RPR_MATERIAL_NODE_OP_SHUFFLE_ZWXY" value="0x1b "/>
+    <define name="RPR_MATERIAL_NODE_OP_SHUFFLE_WXYZ" value="0x1c "/>
+    <define name="RPR_MATERIAL_NODE_OP_MAT_MUL" value="0x1d "/>
+    <define name="RPR_MATERIAL_NODE_OP_SELECT_W" value="0x1e "/>
+    <define name="RPR_MATERIAL_NODE_OP_DOT4" value="0x1f "/>
+    <define name="RPR_MATERIAL_NODE_OP_LOG" value="0x20 "/>
+    <define name="RPR_MATERIAL_NODE_OP_LOWER_OR_EQUAL" value="0x21 "/>
+    <define name="RPR_MATERIAL_NODE_OP_LOWER" value="0x22 "/>
+    <define name="RPR_MATERIAL_NODE_OP_GREATER_OR_EQUAL" value="0x23 "/>
+    <define name="RPR_MATERIAL_NODE_OP_GREATER" value="0x24 "/>
+    <define name="RPR_MATERIAL_NODE_OP_EQUAL" value="0x25 "/>
+    <define name="RPR_MATERIAL_NODE_OP_NOT_EQUAL" value="0x26 "/>
+    <define name="RPR_MATERIAL_NODE_OP_AND" value="0x27 "/>
+    <define name="RPR_MATERIAL_NODE_OP_OR" value="0x28 "/>
+    <define name="RPR_MATERIAL_NODE_OP_TERNARY" value="0x29 "/>
+  </group>
+  <group name ="MaterialNodeLookup" prefix="RPR_MATERIAL_NODE_LOOKUP_" type="rpr_material_node_lookup_value">
+    <define name="RPR_MATERIAL_NODE_LOOKUP_UV" value="0x0 "/>
+    <define name="RPR_MATERIAL_NODE_LOOKUP_N" value="0x1 "/>
+    <define name="RPR_MATERIAL_NODE_LOOKUP_P" value="0x2 "/>
+    <define name="RPR_MATERIAL_NODE_LOOKUP_INVEC" value="0x3 "/>
+    <define name="RPR_MATERIAL_NODE_LOOKUP_OUTVEC" value="0x4 "/>
+    <define name="RPR_MATERIAL_NODE_LOOKUP_UV1" value="0x5 "/>
+  </group>
+  
+  <group name ="MaterialNodeUvtype" prefix="RPR_MATERIAL_NODE_UVTYPE_" type="rpr_material_node_uvtype_value">
+    <define name="RPR_MATERIAL_NODE_UVTYPE_PLANAR" value="0x0 "/>
+    <define name="RPR_MATERIAL_NODE_UVTYPE_CYLINDICAL" value="0x1 "/>
+    <define name="RPR_MATERIAL_NODE_UVTYPE_SPHERICAL" value="0x2 "/>
+    <define name="RPR_MATERIAL_NODE_UVTYPE_PROJECT" value="0x3 "/>
+  </group>
+  
+  <group name ="PostEffectInfo" prefix="RPR_POST_EFFECT_" type="rpr_post_effect_info">
+    <define name="RPR_POST_EFFECT_TYPE" value="0x0 "/>
+    <define name="RPR_POST_EFFECT_WHITE_BALANCE_COLOR_SPACE" value="0x4 "/>
+    <define name="RPR_POST_EFFECT_WHITE_BALANCE_COLOR_TEMPERATURE" value="0x5 "/>
+    <define name="RPR_POST_EFFECT_SIMPLE_TONEMAP_EXPOSURE" value="0x6 "/>
+    <define name="RPR_POST_EFFECT_SIMPLE_TONEMAP_CONTRAST" value="0x7 "/>
+    <define name="RPR_POST_EFFECT_SIMPLE_TONEMAP_ENABLE_TONEMAP" value="0x8 "/>
+  </group>
+  <group name ="Aov" prefix="RPR_AOV_" type="rpr_aov">
+    <define name="RPR_AOV_COLOR" value="0x0 "/>
+    <define name="RPR_AOV_OPACITY" value="0x1 "/>
+    <define name="RPR_AOV_WORLD_COORDINATE" value="0x2 "/>
+    <define name="RPR_AOV_UV" value="0x3 "/>
+    <define name="RPR_AOV_MATERIAL_IDX" value="0x4 "/>
+    <define name="RPR_AOV_GEOMETRIC_NORMAL" value="0x5 "/>
+    <define name="RPR_AOV_SHADING_NORMAL" value="0x6 "/>
+    <define name="RPR_AOV_DEPTH" value="0x7 "/>
+    <define name="RPR_AOV_OBJECT_ID" value="0x8 "/>
+    <define name="RPR_AOV_OBJECT_GROUP_ID" value="0x9 "/>
+    <define name="RPR_AOV_SHADOW_CATCHER" value="0x0a "/>
+    <define name="RPR_AOV_BACKGROUND" value="0x0b "/>
+    <define name="RPR_AOV_EMISSION" value="0x0c "/>
+    <define name="RPR_AOV_VELOCITY" value="0x0d "/>
+    <define name="RPR_AOV_DIRECT_ILLUMINATION" value="0x0e "/>
+    <define name="RPR_AOV_INDIRECT_ILLUMINATION" value="0x0f "/>
+    <define name="RPR_AOV_AO" value="0x10 "/>
+    <define name="RPR_AOV_DIRECT_DIFFUSE" value="0x11 "/>
+    <define name="RPR_AOV_DIRECT_REFLECT" value="0x12 "/>
+    <define name="RPR_AOV_INDIRECT_DIFFUSE" value="0x13 "/>
+    <define name="RPR_AOV_INDIRECT_REFLECT" value="0x14 "/>
+    <define name="RPR_AOV_REFRACT" value="0x15 "/>
+    <define name="RPR_AOV_VOLUME" value="0x16 "/>
+    <define name="RPR_AOV_LIGHT_GROUP0" value="0x17 "/>
+    <define name="RPR_AOV_LIGHT_GROUP1" value="0x18 "/>
+    <define name="RPR_AOV_LIGHT_GROUP2" value="0x19 "/>
+    <define name="RPR_AOV_LIGHT_GROUP3" value="0x1a "/>
+    <define name="RPR_AOV_DIFFUSE_ALBEDO" value="0x1b "/>
+    <define name="RPR_AOV_MAX" value="0x1c "/>
+  </group>
+  <group name ="PostEffectType" prefix="RPR_POST_EFFECT_" type="rpr_post_effect_type">
+    <define name="RPR_POST_EFFECT_TONE_MAP" value="0x0 "/>
+    <define name="RPR_POST_EFFECT_WHITE_BALANCE" value="0x1 "/>
+    <define name="RPR_POST_EFFECT_SIMPLE_TONEMAP" value="0x2 "/>
+    <define name="RPR_POST_EFFECT_NORMALIZATION" value="0x3 "/>
+    <define name="RPR_POST_EFFECT_GAMMA_CORRECTION" value="0x4 "/>
+  </group>
+
+  <group name ="ColorSpace" prefix="RPR_COLOR_SPACE_" type="rpr_color_space">
+    <define name="RPR_COLOR_SPACE_SRGB" value="0x1 "/>
+    <define name="RPR_COLOR_SPACE_ADOBE_RGB" value="0x2 "/>
+    <define name="RPR_COLOR_SPACE_REC2020" value="0x3 "/>
+    <define name="RPR_COLOR_SPACE_DCIP3" value="0x4 "/>
+  </group>
+  <group name ="MaterialNodeInputType" prefix="RPR_MATERIAL_NODE_INPUT_TYPE_" type="rpr_material_node_input_type">
+    <comment>/* rpr_material_node_input_type */</comment>
+    <define name="RPR_MATERIAL_NODE_INPUT_TYPE_FLOAT4" value="0x1 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_TYPE_UINT" value="0x2 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_TYPE_NODE" value="0x3 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_TYPE_IMAGE" value="0x4 "/>
+    <define name="RPR_MATERIAL_NODE_INPUT_TYPE_BUFFER" value="0x5 "/>
+  </group>
+  <group name ="SubdivBoundaryInteropType" prefix="RPR_SUBDIV_BOUNDARY_INTERFOP_TYPE_" type="rpr_subdiv_boundary_interfop_type">
+    <define name="RPR_SUBDIV_BOUNDARY_INTERFOP_TYPE_EDGE_AND_CORNER" value="0x1 "/>
+    <define name="RPR_SUBDIV_BOUNDARY_INTERFOP_TYPE_EDGE_ONLY" value="0x2 "/>
+  </group>
+ 
+  <group name ="ImageWrapType" prefix="RPR_IMAGE_WRAP_TYPE_" type="rpr_image_wrap_type">
+    <define name="RPR_IMAGE_WRAP_TYPE_REPEAT" value="0x1 "/>
+    <define name="RPR_IMAGE_WRAP_TYPE_MIRRORED_REPEAT" value="0x2 "/>
+    <define name="RPR_IMAGE_WRAP_TYPE_CLAMP_TO_EDGE" value="0x3 "/>
+    <comment>/* #define RPR_IMAGE_WRAP_TYPE_CLAMP_TO_BORDER 0x4  - removed in 1.310  because same that RPR_IMAGE_WRAP_TYPE_CLAMP_ZERO */</comment>
+    <define name="RPR_IMAGE_WRAP_TYPE_CLAMP_ZERO" value="0x5 "/>
+    <define name="RPR_IMAGE_WRAP_TYPE_CLAMP_ONE" value="0x6 "/>
+  </group>
+  
+  <group name ="ImageFilterType" prefix="RPR_IMAGE_FILTER_TYPE_" type="rpr_image_filter_type">
+    <define name="RPR_IMAGE_FILTER_TYPE_NEAREST" value="0x1 "/>
+    <define name="RPR_IMAGE_FILTER_TYPE_LINEAR" value="0x2 "/>
+  </group>
+  
+  <comment>/* Constants */</comment>
+  <group name ="CompositeInfo" prefix="RPR_COMPOSITE_" type="rpr_composite_info">
+    <define name="RPR_COMPOSITE_TYPE" value="0x1  "/>
+    <define name="RPR_COMPOSITE_FRAMEBUFFER_INPUT_FB" value="0x2  "/>
+    <define name="RPR_COMPOSITE_NORMALIZE_INPUT_COLOR" value="0x3  "/>
+    <define name="RPR_COMPOSITE_NORMALIZE_INPUT_AOVTYPE" value="0x4  "/>
+    <define name="RPR_COMPOSITE_CONSTANT_INPUT_VALUE" value="0x5  "/>
+    <define name="RPR_COMPOSITE_LERP_VALUE_INPUT_COLOR0" value="0x6  "/>
+    <define name="RPR_COMPOSITE_LERP_VALUE_INPUT_COLOR1" value="0x7  "/>
+    <define name="RPR_COMPOSITE_LERP_VALUE_INPUT_WEIGHT" value="0x8  "/>
+    <define name="RPR_COMPOSITE_ARITHMETIC_INPUT_COLOR0" value="0x9  "/>
+    <define name="RPR_COMPOSITE_ARITHMETIC_INPUT_COLOR1" value="0x0a  "/>
+    <define name="RPR_COMPOSITE_ARITHMETIC_INPUT_OP" value="0x0b  "/>
+    <define name="RPR_COMPOSITE_GAMMA_CORRECTION_INPUT_COLOR" value="0x0c  "/>
+	<define name="RPR_COMPOSITE_LUT_INPUT_LUT" value="0x0d  "/>
+	<define name="RPR_COMPOSITE_LUT_INPUT_COLOR" value="0x0e  "/>
+  </group>
+  <group name ="CompositeType" prefix="RPR_COMPOSITE_" type="rpr_composite_type">
+    <define name="RPR_COMPOSITE_ARITHMETIC" value="0x1  "/>
+    <define name="RPR_COMPOSITE_LERP_VALUE" value="0x2  "/>
+    <define name="RPR_COMPOSITE_INVERSE" value="0x3  "/>
+    <define name="RPR_COMPOSITE_NORMALIZE" value="0x4  "/>
+    <define name="RPR_COMPOSITE_GAMMA_CORRECTION" value="0x5  "/>
+    <define name="RPR_COMPOSITE_EXPOSURE" value="0x6  "/>
+    <define name="RPR_COMPOSITE_CONTRAST" value="0x7  "/>
+    <define name="RPR_COMPOSITE_SIDE_BY_SIDE" value="0x8  "/>
+    <define name="RPR_COMPOSITE_TONEMAP_ACES" value="0x9  "/>
+    <define name="RPR_COMPOSITE_TONEMAP_REINHARD" value="0xa  "/>
+    <define name="RPR_COMPOSITE_TONEMAP_LINEAR" value="0xb  "/>
+    <define name="RPR_COMPOSITE_FRAMEBUFFER" value="0xc  "/>
+    <define name="RPR_COMPOSITE_CONSTANT" value="0xd  "/>
+	<define name="RPR_COMPOSITE_LUT" value="0xe  "/>
+  </group>
+
+  <comment>/*rpr_hetero_volume_parameter*/</comment>
+    <group name ="HeteroVolume" prefix="RPR_HETEROVOLUME_" type="rpr_hetero_volume_parameter">
+    <define name="RPR_HETEROVOLUME_SIZE_X" value="0x730 "/>
+    <define name="RPR_HETEROVOLUME_SIZE_Y" value="0x731 "/>
+    <define name="RPR_HETEROVOLUME_SIZE_Z" value="0x732 "/>
+    <define name="RPR_HETEROVOLUME_DATA" value="0x733 "/>
+    <define name="RPR_HETEROVOLUME_DATA_SIZEBYTE" value="0x734 "/>
+    <define name="RPR_HETEROVOLUME_TRANSFORM" value="0x735 "/>
+    <define name="RPR_HETEROVOLUME_INDICES" value="0x736 "/>
+    <define name="RPR_HETEROVOLUME_INDICES_NUMBER" value="0x737 "/>
+    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY" value="0x738 "/>
+	<define name="RPR_HETEROVOLUME_EMISSION" value="0x739 "/>
+	<define name="RPR_HETEROVOLUME_ALBEDO" value="0x73a "/>
+	<define name="RPR_HETEROVOLUME_FILTER" value="0x73b "/>
+  </group>
+  <group name ="HeteroVolumeIndicesTopology" prefix="RPR_HETEROVOLUME_INDICES_TOPOLOGY_" type="rpr_hetero_volume_indices_topology">
+    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY_I_U64" value="0x750 "/>
+    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY_XYZ_U32" value="0x751 "/>
+    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY_I_S64" value="0x752 "/>
+    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY_XYZ_S32" value="0x753 "/>
+  </group>
+  
+   <group name ="HeteroVolumeFilter" prefix="RPR_HETEROVOLUME_FILTER_" type="rpr_hetero_volume_filter">
+    <define name="RPR_HETEROVOLUME_FILTER_NEAREST" value="0x760 "/>
+    <define name="RPR_HETEROVOLUME_FILTER_LINEAR" value="0x761 "/>
+  </group>
+  
+   <group name ="Curve" prefix="RPR_CURVE_" type="rpr_curve_parameter">
+    <define name="RPR_CURVE_CONTROLPOINTS_COUNT" value="0x830 "/>
+    <define name="RPR_CURVE_CONTROLPOINTS_DATA" value="0x831 "/>
+    <define name="RPR_CURVE_CONTROLPOINTS_STRIDE" value="0x832 "/>
+    <define name="RPR_CURVE_INDICES_COUNT" value="0x833 "/>
+    <define name="RPR_CURVE_INDICES_DATA" value="0x834 "/>
+    <define name="RPR_CURVE_RADIUS" value="0x835 "/>
+    <define name="RPR_CURVE_UV" value="0x836 "/>
+  </group>
+  
+  
+  <comment>/* rpr_bool */</comment>
+  <define name="RPR_FALSE" value="0 "/>
+  <define name="RPR_TRUE" value="1 "/>
+  <comment>/* Library types */</comment>
+  <comment>/* This is going to be moved to rpr_platform.h or similar */</comment>
+  <typedef name="rpr_char" type="char"/>
+  <typedef name="rpr_uchar" type="unsigned char"/>
+  <typedef name="rpr_int" type="int"/>
+  <typedef name="rpr_uint" type="unsigned int"/>
+  <typedef name="rpr_long" type="long int"/>
+  <typedef name="rpr_ulong" type="long unsigned int"/>
+  <typedef name="rpr_short" type="short int"/>
+  <typedef name="rpr_ushort" type="short unsigned int"/>
+  <typedef name="rpr_float" type="float"/>
+  <typedef name="rpr_double" type="double"/>
+  <typedef name="rpr_longlong" type="long long int"/>
+  <typedef name="rpr_bool" type="int"/>
+  <typedef name="rpr_bitfield" type="rpr_uint"/>
+  <typedef name="rpr_status" type="rpr_int"/>
+  <typedef name="rpr_context" type="void *"/>
+  <typedef name="rpr_camera" type="void *"/>
+  <typedef name="rpr_shape" type="void *"/>
+  <typedef name="rpr_light" type="void *"/>
+  <typedef name="rpr_scene" type="void *"/>
+  <typedef name="rpr_image" type="void *"/>
+  <typedef name="rpr_buffer" type="void *"/>
+  <typedef name="rpr_hetero_volume" type="void *"/>
+  <typedef name="rpr_curve" type="void *"/>
+  <typedef name="rpr_framebuffer" type="void *"/>
+  <typedef name="rpr_material_system" type="void *"/>
+  <typedef name="rpr_material_node" type="void *"/>
+  <typedef name="rpr_post_effect" type="void *"/>
+  <typedef name="rpr_context_properties" type="void *"/>
+  <typedef name="rpr_composite" type="void *"/>
+  <typedef name="rpr_lut" type="void *"/>
+  <typedef name="rpr_light_type" type="rpr_uint"/>
+  <typedef name="rpr_image_option" type="rpr_uint"/>
+  <typedef name="rpr_shape_type" type="rpr_uint"/>
+  <typedef name="rpr_context_type" type="rpr_uint"/>
+  <typedef name="rpr_creation_flags" type="rpr_bitfield"/>
+  <typedef name="rpr_aa_filter" type="rpr_uint"/>
+  <typedef name="rpr_context_info" type="rpr_uint"/>
+  <typedef name="rpr_camera_info" type="rpr_uint"/>
+  <typedef name="rpr_image_info" type="rpr_uint"/>
+  <typedef name="rpr_buffer_info" type="rpr_uint"/>
+  <typedef name="rpr_shape_info" type="rpr_uint"/>
+  <typedef name="rpr_mesh_info" type="rpr_uint"/>
+  <typedef name="rpr_mesh_polygon_info" type="rpr_uint"/>
+  <typedef name="rpr_mesh_polygon_vertex_info" type="rpr_uint"/>
+  <typedef name="rpr_light_info" type="rpr_uint"/>
+  <typedef name="rpr_lut_info" type="rpr_uint"/>
+  <typedef name="rpr_scene_info" type="rpr_uint"/>
+  <typedef name="rpr_parameter_info" type="rpr_uint"/>
+  <typedef name="rpr_framebuffer_info" type="rpr_uint"/>
+  <typedef name="rpr_channel_order" type="rpr_uint"/>
+  <typedef name="rpr_channel_type" type="rpr_uint"/>
+  <typedef name="rpr_parameter_type" type="rpr_uint"/>
+  <typedef name="rpr_render_mode" type="rpr_uint"/>
+  <typedef name="rpr_component_type" type="rpr_uint"/>
+  <typedef name="rpr_buffer_element_type" type="rpr_uint"/>
+  <typedef name="rpr_camera_mode" type="rpr_uint"/>
+  <typedef name="rpr_tonemapping_operator" type="rpr_uint"/>
+  <typedef name="rpr_volume_type" type="rpr_uint"/>
+  <typedef name="rpr_material_system_type" type="rpr_uint"/>
+  <typedef name="rpr_material_node_type" type="rpr_uint"/>
+  <typedef name="rpr_material_node_input" type="rpr_uint"/>
+  <typedef name="rpr_material_node_input_type" type="rpr_uint"/>
+  <typedef name="rpr_material_node_info" type="rpr_uint"/>
+  <typedef name="rpr_material_node_input_info" type="rpr_uint"/>
+  <typedef name="rpr_aov" type="rpr_uint"/>
+  <typedef name="rpr_post_effect_type" type="rpr_uint"/>
+  <typedef name="rpr_post_effect_info" type="rpr_uint"/>
+  <typedef name="rpr_composite_info" type="rpr_uint"/>
+  <typedef name="rpr_composite_type" type="rpr_uint"/>
+  <typedef name="rpr_color_space" type="rpr_uint"/>
+  <typedef name="rpr_environment_override" type="rpr_uint"/>
+  <typedef name="rpr_subdiv_boundary_interfop_type" type="rpr_uint"/>
+  <typedef name="rpr_material_node_lookup_value" type="rpr_uint"/>
+  <typedef name="rpr_material_node_uvtype_value" type="rpr_uint"/>
+  <typedef name="rpr_image_wrap_type" type="rpr_uint"/>
+  <typedef name="rpr_image_filter_type" type="rpr_uint"/>
+  <typedef name="rpr_material_node_arithmetic_operation" type="rpr_uint"/>
+  <typedef name="rpr_hetero_volume_parameter" type="rpr_uint"/>
+  <typedef name="rpr_curve_parameter" type="rpr_uint"/>
+  <typedef name="rpr_hetero_volume_indices_topology" type="rpr_uint"/>
+  <typedef name="rpr_hetero_volume_filter" type="rpr_uint"/>
+  <struct name="_rpr_image_desc" camelCaseName="ImageDesc" prefix ="image_">
+    <declaration byte_align="4" byte_size="4" name="image_width" type="rpr_uint"/>
+    <declaration byte_align="4" byte_size="4" name="image_height" type="rpr_uint"/>
+    <declaration byte_align="4" byte_size="4" name="image_depth" type="rpr_uint"/>
+    <declaration byte_align="4" byte_size="4" name="image_row_pitch" type="rpr_uint"/>
+    <declaration byte_align="4" byte_size="4" name="image_slice_pitch" type="rpr_uint"/>
+  </struct>
+  <typedef name="rpr_image_desc" type="_rpr_image_desc"/>
+
+
+  <struct name="_rpr_buffer_desc" camelCaseName="BufferDesc">
+    <declaration byte_align="4" byte_size="4" name="nb_element" type="rpr_uint"/>
+    <declaration byte_align="4" byte_size="4" name="element_type" type="rpr_buffer_element_type"/>
+    <declaration byte_align="4" byte_size="4" name="element_channel_size" type="rpr_uint"/>
+  </struct>
+  <typedef name="rpr_buffer_desc" type="_rpr_buffer_desc"/>
+
+
+  <struct name="_rpr_framebuffer_desc" camelCaseName="FrameBufferDesc">
+    <declaration byte_align="4" byte_size="4" name="fb_width" type="rpr_uint"/>
+    <declaration byte_align="4" byte_size="4" name="fb_height" type="rpr_uint"/>
+  </struct>
+  <typedef name="rpr_framebuffer_desc" type="_rpr_framebuffer_desc"/>
+  <struct name="_rpr_render_statistics" camelCaseName="RenderStatistics">
+    <declaration byte_align="8" byte_size="8" name="gpumem_usage" type="rpr_longlong"/>
+    <declaration byte_align="8" byte_size="8" name="gpumem_total" type="rpr_longlong"/>
+    <declaration byte_align="8" byte_size="8" name="gpumem_max_allocation" type="rpr_longlong"/>
+    <declaration byte_align="8" byte_size="8" name="sysmem_usage" type="rpr_longlong"/>
+  </struct>
+  <typedef name="rpr_render_statistics" type="_rpr_render_statistics"/>
+  <struct name="_rpr_image_format" camelCaseName="ImageFormat">
+    <declaration byte_align="4" byte_size="4" name="num_components" type="rpr_uint"/>
+    <declaration byte_align="4" byte_size="4" name="type" type="rpr_component_type"/>
+  </struct>
+  <typedef name="rpr_image_format" type="_rpr_image_format"/>
+  <struct name="_rpr_ies_image_desc" camelCaseName="IesImageDesc">
+    <declaration byte_align="4" byte_size="4" name="w" type="rpr_int"/>
+    <declaration byte_align="4" byte_size="4" name="h" type="rpr_int"/>
+    <declaration byte_align="0" byte_size="0" name="data" type="rpr_char const *"/>
+    <declaration byte_align="0" byte_size="0" name="filename" type="rpr_char const *"/>
+  </struct>
+  <typedef name="rpr_ies_image_desc" type="_rpr_ies_image_desc"/>
+  <typedef name="rpr_framebuffer_format" type="rpr_image_format"/>
+  <comment>/* API functions */</comment>
+  <comment>
+    /** @brief Register rendering plugin
+    *
+    *  &lt;Description&gt;
+    *
+    *  @param path     Path of plugin to load
+    *  @return         unique identifier of plugin, -1 otherwise
+    */
+  </comment>
+  <function name="rprRegisterPlugin" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="path" type="rpr_char const *"/>
+  </function>
+  <comment>
+    /** @brief Create rendering context
+    *
+    *  Rendering context is a root concept encapsulating the render states and responsible
+    *  for execution control. All the entities in FireRender are created for a particular rendering context.
+    *  Entities created for some context can't be used with other contexts. Possible error codes for this call are:
+    *
+    *     RPR_ERROR_COMPUTE_API_NOT_SUPPORTED
+    *     RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *     RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *     RPR_ERROR_INVALID_API_VERSION
+    *     RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param api_version     Api version constant
+    *	 @param context_type    Determines compute API to use, OPENCL only is supported for now
+    *  @param creation_flags  Determines multi-gpu or cpu-gpu configuration
+    *  @param props           Context creation properties. Specifies a list of context property names and their corresponding values.
+    *                         Each property name is immediately followed by the corresponding desired value.
+    *                         The list is terminated with 0.
+    *  @param cache_path      Full path to kernel cache created by FireRender, NULL means to use current folder
+    *  @param cpu_thread_limit	Limit for the number of threads used for CPU rendering
+    *  @param out_context		Pointer to context object
+    *  @return                RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCreateContext" return_type="rpr_int">
+    <arg byte_align="4" byte_size="4" name="api_version" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="pluginIDs" type="rpr_int const *" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="pluginCount" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="creation_flags" type="rpr_creation_flags"/>
+    <arg byte_align="0" byte_size="0" name="props" type="rpr_context_properties const *"/>
+    <arg byte_align="0" byte_size="0" name="cache_path" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_context" type="rpr_context *"/>
+  </function>
+  <comment>
+    /** @breif Set active context plugin
+    *
+    */
+  </comment>
+  <function name="rprContextSetActivePlugin" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="4" byte_size="4" name="pluginID" type="rpr_int"/>
+  </function>
+  <comment>
+    /** @brief Query information about a context
+    *
+    *  The workflow is usually two-step: query with the data == NULL and size = 0 to get the required buffer size in size_ret,
+    *  then query with size_ret == NULL to fill the buffer with the data.
+    *   Possible error codes:
+    *     RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  context         The context to query
+    *  @param  context_info    The type of info to query
+    *  @param  size            The size of the buffer pointed by data
+    *  @param  data            The buffer to store queried info
+    *  @param  size_ret        Returns the size in bytes of the data being queried
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="4" byte_size="4" name="context_info" type="rpr_context_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="size_ret" type="size_t *" is_out="true"/>
+  </function>
+  <comment>
+    /** @brief Query information about a context parameter
+    *
+    *  The workflow is usually two-step: query with the data == NULL and size = 0 to get the required buffer size in size_ret,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *     RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  context         The context to query
+    *  @param  param_idx	   The index of the parameter
+    *  @param  parameter_info  The type of info to query
+    *  @param  size            The size of the buffer pointed by data
+    *  @param  data            The buffer to store queried info
+    *  @param  size_ret        Returns the size in bytes of the data being queried
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextGetParameterInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="4" byte_size="4" name="param_idx" type="rpr_int"/>
+    <arg byte_align="4" byte_size="4" name="parameter_info" type="rpr_parameter_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="size_ret" type="size_t *"/>
+  </function>
+  <comment>
+    /** @brief Query the AOV
+    *
+    *  @param  context     The context to get a frame buffer from
+    *  @param  out_fb		Pointer to framebuffer object
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextGetAOV" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="4" byte_size="4" name="aov" type="rpr_aov"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_fb" type="rpr_framebuffer *"/>
+  </function>
+  
+  
+  <comment>
+    /** @brief Set AOV
+    *
+    *  @param  context         The context to set AOV
+    *  @param  aov				AOV
+    *  @param  frame_buffer    Frame buffer object to set
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextSetAOV" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="4" byte_size="4" name="aov" type="rpr_aov"/>
+    <arg byte_align="0" byte_size="0" name="frame_buffer" type="rpr_framebuffer"/>
+  </function>
+  
+  
+  
+    <comment>
+    /** @brief Set AOV Index Lookup Color
+    *          change the color of  AOV rendering IDs,  like : RPR_AOV_MATERIAL_IDX , RPR_AOV_OBJECT_ID, RPR_AOV_OBJECT_GROUP_ID.
+    *          for example, you can render all the  shapes with ObjectGroupID=4  in the Red color inside the RPR_AOV_OBJECT_GROUP_ID AOV
+    *
+    *  @param  context         The context to set AOV index lookup
+    *  @param  key				id
+    *  @param  colorR			red channel
+    *  @param  colorG			green channel
+    *  @param  colorB			blue channel
+    *  @param  colorA			alpha channel
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextSetAOVindexLookup" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="key" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="colorR" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="colorG" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="colorB" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="colorA" type="rpr_float"/>
+  </function>
+  
+  
+  <comment>
+    /** @brief Set the scene
+    *
+    *  The scene is a collection of objects and lights
+    *  along with all the data required to shade those. The scene is
+    *  used by the context to render the image.
+    *
+    *  @param  context     The context to set the scene
+    *  @param  scene       The scene to set
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextSetScene" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+  </function>
+  <comment>
+    /** @brief Get the current scene
+    *
+    *  The scene is a collection of objects and lights
+    *  along with all the data required to shade those. The scene is
+    *  used by the context ro render the image.
+    *
+    *  @param  context     The context to get the scene from
+    *  @param  out_scene   Pointer to scene object
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextGetScene" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="arg0" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_scene" type="rpr_scene *"/>
+  </function>
+  <comment>
+    /** @brief Set context parameter
+    *
+    *  Parameters are used to control rendering modes, global sampling and AA settings, etc
+    *
+    *  @param  context                        The context to set the value to
+    *  @param  name						   Param name, can be:
+
+
+    *  aacellsize                          ft_float
+    *  aasamples                           ft_float
+
+    *  imagefilter.type					   rpr_aa_filter
+    *  imagefilter.box.radius              ft_float
+    *  imagefilter.gaussian.radius         ft_float
+    *  imagefilter.triangle.radius         ft_float
+    *  imagefilter.mitchell.radius         ft_float
+    *  imagefilter.lanczos.radius          ft_float
+    *  imagefilter.blackmanharris.radius   ft_float
+
+    *  tonemapping.type                    rpr_tonemapping_operator
+    *  tonemapping.linear.scale            ft_float
+    *  tonemapping.photolinear.sensitivity ft_float
+    *  tonemapping.photolinear.exposure    ft_float
+    *  tonemapping.photolinear.fstop       ft_float
+    *  tonemapping.reinhard02.prescale     ft_float
+    *  tonemapping.reinhard02.postscale    ft_float
+    *  tonemapping.reinhard02.burn         ft_float
+
+
+    * @param x,y,z,w						   Parameter value
+
+    * @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextSetParameter1u" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_uint"/>
+  </function>
+  <function name="rprContextSetParameter1f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+  </function>
+  <function name="rprContextSetParameter3f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="y" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="z" type="rpr_float"/>
+  </function>
+  <function name="rprContextSetParameter4f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="y" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="z" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="w" type="rpr_float"/>
+  </function>
+  <function name="rprContextSetParameterString" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="value" type="rpr_char const *"/>
+  </function>
+  <comment>
+    /** @brief Perform evaluation and accumulation of a single sample (or number of AA samples if AA is enabled)
+    *
+    *  The call is blocking and the image is ready when returned. The context accumulates the samples in order
+    *  to progressively refine the image and enable interactive response. So each new call to Render refines the
+    *  resultin image with 1 (or num aa samples) color samples. Call rprFramebufferClear if you want to start rendering new image
+    *  instead of refining the previous one.
+    *
+    *  Possible error codes:
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_INTERNAL_ERROR
+    *      RPR_ERROR_MATERIAL_STACK_OVERFLOW
+    *
+    *  if you have the RPR_ERROR_MATERIAL_STACK_OVERFLOW error, you have created a shader graph with too many nodes.
+    *  you can check the nodes limit with rprContextGetInfo(,RPR_CONTEXT_MATERIAL_STACK_SIZE,)
+    *
+    *  @param  context     The context object
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextRender" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+  </function>
+  
+  
+    <comment>
+    /** @brief  can be called in a different thread to interrupt the rendering
+	*  then, rprContextRender will return  RPR_ERROR_ABORTED instead of RPR_SUCCESS
+    */
+  </comment>
+  <function name="rprContextAbortRender" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+  </function>
+  
+  
+  
+  <comment>
+    /** @brief Perform evaluation and accumulation of a single sample (or number of AA samples if AA is enabled) on the part of the image
+    *
+    *  The call is blocking and the image is ready when returned. The context accumulates the samples in order
+    *  to progressively refine the image and enable interactive response. So each new call to Render refines the
+    *  resultin image with 1 (or num aa samples) color samples. Call rprFramebufferClear if you want to start rendering new image
+    *  instead of refining the previous one. Possible error codes are:
+    *
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_INTERNAL_ERROR
+    *
+    *  @param  context     The context to use for the rendering
+    *  @param  xmin        X coordinate of the top left corner of a tile
+    *  @param  xmax        X coordinate of the bottom right corner of a tile
+    *  @param  ymin        Y coordinate of the top left corner of a tile
+    *  @param  ymax        Y coordinate of the bottom right corner of a tile
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextRenderTile" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="4" byte_size="4" name="xmin" type="rpr_uint"/>
+    <arg byte_align="4" byte_size="4" name="xmax" type="rpr_uint"/>
+    <arg byte_align="4" byte_size="4" name="ymin" type="rpr_uint"/>
+    <arg byte_align="4" byte_size="4" name="ymax" type="rpr_uint"/>
+  </function>
+  <comment>
+    /** @brief Clear all video memory used by the context
+    *
+    *  This function should be called after all context objects have been destroyed.
+    *  It guarantees that all context memory is freed and returns the context into its initial state.
+    *  Will be removed later. Possible error codes are:
+    *
+    *      RPR_ERROR_INTERNAL_ERROR
+    *
+    *  @param  context     The context to wipe out
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextClearMemory" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+  </function>
+  <comment>
+    /** @brief Create an image from memory data
+    *
+    *  Images are used as HDRI maps or inputs for various shading system nodes.
+    *  Possible error codes are:
+    *
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_UNSUPPORTED_IMAGE_FORMAT
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  context     The context to create image
+    *  @param  format      Image format
+    *  @param  image_desc  Image layout description
+    *  @param  data        Image data in system memory, can be NULL in which case the memory is allocated
+    *  @param  out_image   Pointer to image object
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateImage" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="format" type="rpr_image_format const"/>
+    <arg byte_align="0" byte_size="0" name="image_desc" type="rpr_image_desc const *"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void const *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_image" type="rpr_image *"/>
+  </function>
+  <comment>
+    /** @brief Create a buffer from memory data
+    *
+    *  Buffers are used as arbitrary input for other nodes
+    *
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_UNSUPPORTED_IMAGE_FORMAT
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  context     The context to create image
+    *  @param  buffer_desc Buffer layout description
+    *  @param  data        Image data in system memory, can be NULL in which case the memory is allocated
+    *  @param  out_buffer  Pointer to buffer object
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateBuffer" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="buffer_desc" type="rpr_buffer_desc const *"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void const *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_buffer" type="rpr_buffer *"/>
+  </function>
+  <comment>
+    /** @brief Create an image from file
+    *
+    *   Images are used as HDRI maps or inputs for various shading system nodes.
+    *
+    *  The following image formats are supported:
+    *      PNG, JPG, TGA, BMP, TIFF, TX(0-mip), HDR, EXR
+    *
+    *  Possible error codes are:
+    *
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_UNSUPPORTED_IMAGE_FORMAT
+    *      RPR_ERROR_INVALID_PARAMETER
+    *      RPR_ERROR_IO_ERROR
+    *
+    *  @param  context     The context to create image
+    *  @param  path        NULL terminated path to an image file (can be relative)
+    *  @param  out_image   Pointer to image object
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateImageFromFile" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="path" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_image" type="rpr_image *"/>
+  </function>
+  <comment>
+    /** @brief Create a scene
+    *
+    *  Scene serves as a container for lights and objects.
+    *
+    *  Possible error codes are:
+    *
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *
+    *  @param  out_scene   Pointer to scene object
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateScene" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_scene" type="rpr_scene *"/>
+  </function>
+  <comment>
+    /** @brief Create an instance of an object
+    *
+    *  Possible error codes are:
+    *
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  context  The context to create an instance for
+    *  @param  shape    Parent shape for an instance
+    *  @param  out_instance   Pointer to instance object
+    *  @return RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateInstance" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_instance" type="rpr_shape *"/>
+  </function>
+  <comment>
+    /** @brief Create a mesh
+    *
+    *  FireRender supports mixed meshes consisting of triangles and quads.
+    *
+    *  Possible error codes are:
+    *
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  vertices            Pointer to position data (each position is described with 3 rpr_float numbers)
+    *  @param  num_vertices        Number of entries in position array
+    *  @param  vertex_stride       Number of bytes between the beginnings of two successive position entries
+    *  @param  normals             Pointer to normal data (each normal is described with 3 rpr_float numbers), can be NULL
+    *  @param  num_normals         Number of entries in normal array
+    *  @param  normal_stride       Number of bytes between the beginnings of two successive normal entries
+    *  @param  texcoord            Pointer to texcoord data (each texcoord is described with 2 rpr_float numbers), can be NULL
+    *  @param  num_texcoords       Number of entries in texcoord array
+    *  @param  texcoord_stride     Number of bytes between the beginnings of two successive texcoord entries
+    *  @param  vertex_indices      Pointer to an array of vertex indices
+    *  @param  vidx_stride         Number of bytes between the beginnings of two successive vertex index entries
+    *  @param  normal_indices      Pointer to an array of normal indices
+    *  @param  nidx_stride         Number of bytes between the beginnings of two successive normal index entries
+    *  @param  texcoord_indices    Pointer to an array of texcoord indices
+    *  @param  tidx_stride         Number of bytes between the beginnings of two successive texcoord index entries
+    *  @param  num_face_vertices   Pointer to an array of num_faces numbers describing number of vertices for each face (can be 3(triangle) or 4(quad))
+    *  @param  num_faces           Number of faces in the mesh
+    *  @param  out_mesh            Pointer to mesh object
+    *  @return                     RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateMesh" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="vertices" type="rpr_float const *" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="num_vertices" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="vertex_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="normals" type="rpr_float const *" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="num_normals" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="normal_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="texcoords" type="rpr_float const *" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="num_texcoords" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="texcoord_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="vertex_indices" type="rpr_int const *" is_array="true"/>
+    <arg byte_align="4" byte_size="4" name="vidx_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="normal_indices" type="rpr_int const *" is_array="true"/>
+    <arg byte_align="4" byte_size="4" name="nidx_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="texcoord_indices" type="rpr_int const *" is_array="true"/>
+    <arg byte_align="4" byte_size="4" name="tidx_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="num_face_vertices" type="rpr_int const *" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="num_faces" type="size_t"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_mesh" type="rpr_shape *"/>
+  </function>
+
+
+  <comment>
+    /*  @brief Create a mesh
+    *
+    *  @return                     RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateMeshEx" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="vertices" type="rpr_float const *" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="num_vertices" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="vertex_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="normals" type="rpr_float const *" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="num_normals" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="normal_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="perVertexFlag" type="rpr_int const *" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="num_perVertexFlags" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="perVertexFlag_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="numberOfTexCoordLayers" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="texcoords" type="rpr_float const **" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="num_texcoords" type="size_t const *"/>
+    <arg byte_align="4" byte_size="4" name="texcoord_stride" type="rpr_int const *"/>
+    <arg byte_align="0" byte_size="0" name="vertex_indices" type="rpr_int const *" is_array="true"/>
+    <arg byte_align="4" byte_size="4" name="vidx_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="normal_indices" type="rpr_int const *" is_array="true"/>
+    <arg byte_align="4" byte_size="4" name="nidx_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="texcoord_indices" type="rpr_int const **" is_array="true"/>
+    <arg byte_align="4" byte_size="4" name="tidx_stride" type="rpr_int const *"/>
+    <arg byte_align="0" byte_size="0" name="num_face_vertices" type="rpr_int const *" is_array="true"/>
+    <arg byte_align="8" byte_size="8" name="num_faces" type="size_t"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_mesh" type="rpr_shape *"/>
+  </function>
+
+
+  <comment>
+    /*  @brief Create a mesh
+    *
+    *  @return                     RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateMeshEx2" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="vertices" type="rpr_float const *"/>
+    <arg byte_align="8" byte_size="8" name="num_vertices" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="vertex_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="normals" type="rpr_float const *"/>
+    <arg byte_align="8" byte_size="8" name="num_normals" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="normal_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="perVertexFlag" type="rpr_int const *"/>
+    <arg byte_align="8" byte_size="8" name="num_perVertexFlags" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="perVertexFlag_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="numberOfTexCoordLayers" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="texcoords" type="rpr_float const **"/>
+    <arg byte_align="8" byte_size="8" name="num_texcoords" type="size_t const *"/>
+    <arg byte_align="4" byte_size="4" name="texcoord_stride" type="rpr_int const *"/>
+    <arg byte_align="0" byte_size="0" name="vertex_indices" type="rpr_int const *"/>
+    <arg byte_align="4" byte_size="4" name="vidx_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="normal_indices" type="rpr_int const *"/>
+    <arg byte_align="4" byte_size="4" name="nidx_stride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="texcoord_indices" type="rpr_int const **"/>
+    <arg byte_align="4" byte_size="4" name="tidx_stride" type="rpr_int const *"/>
+    <arg byte_align="0" byte_size="0" name="num_face_vertices" type="rpr_int const *"/>
+    <arg byte_align="8" byte_size="8" name="num_faces" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="mesh_properties" type="rpr_mesh_info const *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_mesh" type="rpr_shape *"/>
+  </function>
+
+
+  <comment>
+    /** @brief Create a camera
+    *
+    *  There are several camera types supported by a single rpr_camera type.
+    *  Possible error codes are:
+    *
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    *  @param  context The context to create a camera for
+    *  @param  out_camera Pointer to camera object
+    *  @return RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateCamera" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_camera" type="rpr_camera *"/>
+  </function>
+  <comment>
+    /** @brief Create framebuffer object
+    *
+    *  Framebuffer is used to store final rendering result.
+    *
+    *  Possible error codes are:
+    *
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    *  @param  context  The context to create framebuffer
+    *  @param  format   Framebuffer format
+    *  @param  fb_desc  Framebuffer layout description
+    *  @param  status   Pointer to framebuffer object
+    *  @return          RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprContextCreateFrameBuffer" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="format" type="rpr_framebuffer_format const"/>
+    <arg byte_align="0" byte_size="0" name="fb_desc" type="rpr_framebuffer_desc const *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_fb" type="rpr_framebuffer *"/>
+  </function>
+  <comment>/* rpr_camera */</comment>
+  <comment>
+    /** @brief Query information about a camera
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data.
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  camera      The camera to query
+    *  @param  camera_info The type of info to query
+    *  @param  size        The size of the buffer pointed by data
+    *  @param  data        The buffer to store queried info
+    *  @param  size_ret    Returns the size in bytes of the data being queried
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="camera_info" type="rpr_camera_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="size_ret" type="size_t *"/>
+  </function>
+  <comment>
+    /** @brief Set camera focal length.
+    *
+    *  @param  camera  The camera to set focal length
+    *  @param  flength Focal length in millimeters, default is 35mm
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetFocalLength" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="flength" type="rpr_float"/>
+  </function>
+  
+    <comment>
+    /** @brief Set camera linear motion.
+    *
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetLinearMotion" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="0" byte_size="0" name="x" type="rpr_float"/>
+	<arg byte_align="0" byte_size="0" name="y" type="rpr_float"/>
+	<arg byte_align="0" byte_size="0" name="z" type="rpr_float"/>
+  </function>
+  
+    <comment>
+     /** @brief Set camera angular motion.
+    *
+	* x,y,z : vector  -  w : angle in radian
+	*
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetAngularMotion" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="0" byte_size="0" name="x" type="rpr_float"/>
+	<arg byte_align="0" byte_size="0" name="y" type="rpr_float"/>
+	<arg byte_align="0" byte_size="0" name="z" type="rpr_float"/>
+	<arg byte_align="0" byte_size="0" name="w" type="rpr_float"/>
+  </function>
+  
+  
+  
+  <comment>
+    /** @brief Set camera focus distance
+    *
+    *  @param  camera  The camera to set focus distance
+    *  @param  fdist   Focus distance in meters, default is 1m
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetFocusDistance" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="fdist" type="rpr_float"/>
+  </function>
+
+  <comment>
+    /** @brief Set world transform for the camera
+    *
+    *  @param  camera      The camera to set transform for
+    *  @param  transpose   Determines whether the basis vectors are in columns(false) or in rows(true) of the matrix
+    *  @param  transform   Array of 16 rpr_float values (row-major form)
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetTransform" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="transpose" type="rpr_bool"/>
+    <arg byte_align="0" byte_size="0" name="transform" type="rpr_float const *" is_array="true"/>
+  </function>
+  <comment>
+    /** @brief Set sensor size for the camera
+    *
+    *  Default sensor size is the one corresponding to full frame 36x24mm sensor
+    *
+    *  @param  camera  The camera to set transform for
+    *  @param  width   Sensor width in millimeters
+    *  @param  height  Sensor height in millimeters
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetSensorSize" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="width" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="height" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set camera transform in lookat form
+    *
+    *  @param  camera  The camera to set transform for
+    *  @param  posx    X component of the position
+    *  @param  posy    Y component of the position
+    *  @param  posz    Z component of the position
+    *  @param  atx     X component of the center point
+    *  @param  aty     Y component of the center point
+    *  @param  atz     Z component of the center point
+    *  @param  upx     X component of the up vector
+    *  @param  upy     Y component of the up vector
+    *  @param  upz     Z component of the up vector
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraLookAt" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="posx" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="posy" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="posz" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="atx" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="aty" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="atz" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="upx" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="upy" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="upz" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set f-stop for the camera
+    *
+    *  @param  camera  The camera to set f-stop for
+    *  @param  fstop   f-stop value in mm^-1, default is FLT_MAX
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetFStop" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="fstop" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set the number of aperture blades
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  camera      The camera to set aperture blades for
+    *  @param  num_blades  Number of aperture blades 4 to 32
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetApertureBlades" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="num_blades" type="rpr_uint"/>
+  </function>
+  <comment>
+    /** @brief Set the exposure of a camera
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  camera    The camera to set aperture blades for
+    *  @param  exposure  Exposure value 0.0 - 1.0
+    *  @return           RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetExposure" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="exposure" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set camera mode
+    *
+    *  Camera modes include:
+    *      RPR_CAMERA_MODE_PERSPECTIVE
+    *      RPR_CAMERA_MODE_ORTHOGRAPHIC
+    *      RPR_CAMERA_MODE_LATITUDE_LONGITUDE_360
+    *      RPR_CAMERA_MODE_LATITUDE_LONGITUDE_STEREO
+    *      RPR_CAMERA_MODE_CUBEMAP
+    *      RPR_CAMERA_MODE_CUBEMAP_STEREO
+    *      RPR_CAMERA_MODE_FISHEYE
+    *
+    *  @param  camera  The camera to set mode for
+    *  @param  mode    Camera mode, default is RPR_CAMERA_MODE_PERSPECTIVE
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetMode" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="mode" type="rpr_camera_mode"/>
+  </function>
+  <comment>
+    /** @brief Set orthographic view volume width
+    *
+    *  @param  camera  The camera to set volume width for
+    *  @param  width   View volume width in meters, default is 1 meter
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetOrthoWidth" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="width" type="rpr_float"/>
+  </function>
+
+  <function name="rprCameraSetFocalTilt" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="tilt" type="rpr_float"/>
+  </function>
+  <function name="rprCameraSetIPD" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="ipd" type="rpr_float"/>
+  </function>
+  <function name="rprCameraSetLensShift" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="shiftx" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="shifty" type="rpr_float"/>
+  </function>
+  <function name="rprCameraSetTiltCorrection" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="tiltX" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="tiltY" type="rpr_float"/>
+  </function>
+
+  <comment>
+    /** @brief Set orthographic view volume height
+    *
+    *  @param  camera  The camera to set volume height for
+    *  @param  width   View volume height in meters, default is 1 meter
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetOrthoHeight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="height" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set near plane of a camear
+    *
+    *  @param  camera  The camera to set near plane for
+    *  @param  near   Near plane distance in meters, default is 0.01f
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetNearPlane" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="near" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set far plane of a camear
+    *
+    *  @param  camera  The camera to set far plane for
+    *  @param  far   Far plane distance in meters, default is 100000000.f
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCameraSetFarPlane" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+    <arg byte_align="4" byte_size="4" name="far" type="rpr_float"/>
+  </function>
+  <comment>/* rpr_image*/</comment>
+  <comment>
+    /** @brief Query information about an image
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  image       An image object to query
+    *  @param  image_info  The type of info to query
+    *  @param  size        The size of the buffer pointed by data
+    *  @param  data        The buffer to store queried info
+    *  @param  size_ret    Returns the size in bytes of the data being queried
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprImageGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="image" type="rpr_image"/>
+    <arg byte_align="4" byte_size="4" name="image_info" type="rpr_image_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="size_ret" type="size_t *"/>
+  </function>
+  
+  
+  <comment>
+    /** @brief
+    *
+    *
+    *  @param  image       The image to set wrap for
+    *  @param  type
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprImageSetWrap" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="image" type="rpr_image"/>
+    <arg byte_align="4" byte_size="4" name="type" type="rpr_image_wrap_type"/>
+  </function>
+  
+    <comment>
+    /** @brief
+    *
+    *
+    *  @param  image       The image to set filter for
+    *  @param  type
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprImageSetFilter" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="image" type="rpr_image"/>
+    <arg byte_align="4" byte_size="4" name="type" type="rpr_image_filter_type"/>
+  </function>
+
+<comment>/** @brief 
+*
+*  @param  image       The image to set gamma for
+*  @param  type    
+*  @return             RPR_SUCCESS in case of success, error code otherwise
+*/</comment>
+    <function name="rprImageSetGamma" return_type="rpr_int">
+        <arg byte_align="0" byte_size="0" name="image" type="rpr_image"/>
+        <arg byte_align="4" byte_size="4" name="type" type="rpr_float"/>
+    </function>
+
+<comment>/** @brief 
+*
+*  @param  image       The image to set mipmap for
+*  @param  enabled     true (enable) or false (disable)
+*  @return             RPR_SUCCESS in case of success, error code otherwise
+*/</comment>
+    <function name="rprImageSetMipmapEnabled" return_type="rpr_int">
+        <arg byte_align="0" byte_size="0" name="image" type="rpr_image"/>
+        <arg byte_align="0" byte_size="0" name="enabled" type="rpr_bool"/>
+    </function>
+
+	
+	
+	
+  <comment>/* rpr_shape */</comment>
+  <comment>
+    /** @brief Set shape world transform
+    *
+    *
+    *  @param  shape       The shape to set transform for
+    *  @param  transpose   Determines whether the basis vectors are in columns(false) or in rows(true) of the matrix
+    *  @param  transform   Array of 16 rpr_float values (row-major form)
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetTransform" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="transpose" type="rpr_bool"/>
+    <arg byte_align="0" byte_size="0" name="transform" type="rpr_float const *" is_array="true"/>
+  </function>
+  <comment>
+    /** @brief Set shape subdivision
+    *
+    *
+    *  @param  shape       The shape to set subdivision for
+    *  @param  factor	   Number of subdivision steps to do
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetSubdivisionFactor" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="factor" type="rpr_uint"/>
+  </function>
+  <comment>
+    /** @brief
+    *
+    *
+    *  @param  shape       The shape to set subdivision for
+    *  @param  factor
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetSubdivisionCreaseWeight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="factor" type="rpr_float"/>
+  </function>
+  
+  <comment>
+    /** @brief
+    *
+    *
+    *  @param  shape       The shape to set subdivision for
+    *  @param  type
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetSubdivisionBoundaryInterop" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="type" type="rpr_subdiv_boundary_interfop_type"/>
+  </function>
+  
+
+  <comment>
+    /** @brief Call this function to automatically set the Subdivision Factor depending on the camera position, frame buffer size.
+    *          You can retrieve the internally computed factor with rprShapeGetInfo(...,RPR_SHAPE_SUBDIVISION_FACTOR,...)
+    *          You have to call this function each time you want to re-adapt the Subdivision Factor : 
+    *          internally the factor will NOT be automatically re-computed when camera/shape/framebuffer changes. 
+    *
+    *  @param  shape       The shape to set subdivision for
+    *  @param  framebuffer frame buffer used for factor adaptation
+    *  @param  camera      camera used for factor adaptation
+    *  @param  factor      factor to regulate the intensity of adaptation
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeAutoAdaptSubdivisionFactor" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="0" byte_size="0" name="framebuffer" type="rpr_framebuffer"/>
+	<arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+	<arg byte_align="0" byte_size="0" name="factor" type="rpr_int"/>
+  </function>
+  
+  <comment>
+    /** @brief Set displacement scale
+    *
+    *
+    *  @param  shape       The shape to set subdivision for
+    *  @param  scale	   The amount of displacement applied
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetDisplacementScale" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="minscale" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="maxscale" type="rpr_float"/>
+  </function>
+  
+  <comment>
+    /** @brief Set object group ID (mainly for debugging).
+    *
+    *
+    *  @param  shape          The shape to set
+    *  @param  objectGroupID  The ID
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetObjectGroupID" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="objectGroupID" type="rpr_uint"/>
+  </function>
+
+  
+    <comment>
+    /** @brief Set light group ID when shape has an emissive material (mainly for debugging).
+    *
+    *  @param  shape          The shape to set
+    *  @param  lightGroupID  The ID
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetLightGroupID" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="lightGroupID" type="rpr_uint"/>
+  </function>
+  
+  
+  <comment>
+    /** @brief Set object rendering layer mask
+    *          then, use   rprContextSetParameter1u(context,"renderLayerMask",mask)  
+    *          in order to render only a group of shape
+    *
+    *  @param  shape       The shape to set
+    *  @param  layerMask   The render mask
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetLayerMask" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="layerMask" type="rpr_uint"/>
+  </function>
+
+
+  <comment>
+    /** @brief Set displacement texture
+    *
+    *
+    *  @param  shape         The shape to set subdivision for
+    *  @param  materialNode  Displacement texture , as material.
+    *  @return               RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetDisplacementMaterial" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="0" byte_size="0" name="materialNode" type="rpr_material_node"/>
+  </function>
+
+
+
+
+  <comment>
+    /** @brief Set shape material
+    *
+    */
+  </comment>
+  <function name="rprShapeSetMaterial" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="0" byte_size="0" name="node" type="rpr_material_node"/>
+  </function>
+  <comment>
+    /** @brief Set shape materials for specific faces
+    *
+    *  @param  shape	The shape to set the material for
+    *  @param  node 	The material to set
+    *  @param  face_indices
+    *  @return		RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetMaterialFaces" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="0" byte_size="0" name="node" type="rpr_material_node"/>
+    <arg byte_align="0" byte_size="0" name="face_indices" type="rpr_int const *"/>
+    <arg byte_align="8" byte_size="8" name="num_faces" type="size_t"/>
+  </function>
+  <comment>
+
+
+
+    /** @brief Set shape volume material
+    *
+    */
+  </comment>
+  <function name="rprShapeSetVolumeMaterial" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="0" byte_size="0" name="node" type="rpr_material_node"/>
+  </function>
+  <comment>
+    /** @brief Set shape linear motion
+    *
+    *  @param  shape       The shape to set linear motion for
+    *  @param  x           X component of a motion vector
+    *  @param  y           Y component of a motion vector
+    *  @param  z           Z component of a motion vector
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetLinearMotion" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="y" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="z" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set angular linear motion
+    *
+    *  @param  shape       The shape to set linear motion for
+    *  @param  x           X component of the rotation axis
+    *  @param  y           Y component of the rotation axis
+    *  @param  z           Z component of the rotation axis
+    *  @param  w           W rotation angle in radians
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetAngularMotion" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="y" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="z" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="w" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set scale linear motion
+    *
+    *  @param  shape       The shape to set linear motion for
+    *  @param  x           X component of the scale
+    *  @param  y           Y component of the scale
+    *  @param  z           Z component of the scale
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetScaleMotion" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="y" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="z" type="rpr_float"/>
+  </function>
+  
+  
+
+  <comment>
+    /** @brief Set visibility flag
+    *
+    *  @param  shape           The shape to set visibility for
+    *  @param  visibilityFlag   . one of the visibility flags : 
+    *                             RPR_SHAPE_VISIBILITY_PRIMARY_ONLY_FLAG
+    *                             RPR_SHAPE_VISIBILITY_SHADOW
+    *                             RPR_SHAPE_VISIBILITY_REFLECTION
+    *                             RPR_SHAPE_VISIBILITY_REFRACTION
+    *                             RPR_SHAPE_VISIBILITY_TRANSPARENT
+    *                             RPR_SHAPE_VISIBILITY_DIFFUSE
+    *                             RPR_SHAPE_VISIBILITY_GLOSSY_REFLECTION
+    *                             RPR_SHAPE_VISIBILITY_GLOSSY_REFRACTION
+    *                             RPR_SHAPE_VISIBILITY_LIGHT
+    *  @param  visible          set the flag to TRUE or FALSE
+    *  @return                  RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetVisibilityFlag" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="0" byte_size="0" name="visibilityFlag" type="rpr_shape_info"/>
+    <arg byte_align="0" byte_size="0" name="visible" type="rpr_bool"/>
+  </function>
+  
+  
+  
+  
+  
+  
+  <comment>
+    /** @brief Set visibility flag
+    *
+    *  @param  shape       The shape to set visibility for
+    *  @param  visible     Determines if the shape is visible or not
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetVisibility" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="visible" type="rpr_bool"/>
+  </function>
+
+  
+
+  
+  <comment>
+    /** @brief Set visibility flag for specular refleacted\refracted rays
+    *
+    *  @param  shape       The shape to set visibility for
+    *  @param  visible     Determines if the shape is visible or not
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetVisibilityInSpecular" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="visible" type="rpr_bool"/>
+  </function>
+  <comment>
+    /** @brief Set shadow catcher flag
+    *
+    *  @param  shape         The shape to set shadow catcher flag for
+    *  @param  shadowCatcher Determines if the shape behaves as shadow catcher
+    *  @return               RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetShadowCatcher" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="shadowCatcher" type="rpr_bool"/>
+  </function>
+  <comment>
+    /** @brief Set shadow flag
+    *
+    *  @param  shape       The shape to set shadow flag for
+    *  @param  visible     Determines if the shape casts shadow
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeSetShadow" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="casts_shadow" type="rpr_bool"/>
+  </function>
+  
+  
+  <comment>
+    /** @brief Set light world transform
+    *
+    *
+    *  @param  light       The light to set transform for
+    *  @param  transpose   Determines whether the basis vectors are in columns(false) or in rows(true) of the matrix
+    *  @param  transform   Array of 16 rpr_float values (row-major form)
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprLightSetTransform" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="transpose" type="rpr_bool"/>
+    <arg byte_align="0" byte_size="0" name="transform" type="rpr_float const *" is_array="true"/>
+  </function>
+  
+  
+    
+  <comment>
+    /** @brief Set light group ID. This parameter can be used with RPR_AOV_LIGHT_GROUP0, RPR_AOV_LIGHT_GROUP1, RPR_AOV_LIGHT_GROUP2, RPR_AOV_LIGHT_GROUP3
+    *
+    *  @param  light       The light to set transform for
+    *  @param  groupId     -1 to remove the group.  or a value between 0 and 3.
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprLightSetGroupId" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+    <arg byte_align="0" byte_size="0" name="groupId" type="rpr_uint" />
+  </function>
+  
+  
+  
+  <comment>
+    /** @brief Query information about a shape
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  shape           The shape object to query
+    *  @param  material_info   The type of info to query
+    *  @param  size            The size of the buffer pointed by data
+    *  @param  data            The buffer to store queried info
+    *  @param  size_ret        Returns the size in bytes of the data being queried
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprShapeGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="arg0" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="arg1" type="rpr_shape_info"/>
+    <arg byte_align="8" byte_size="8" name="arg2" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="arg3" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="arg4" is_out ="true" type="size_t *" />
+  </function>
+  <comment>/* rpr_shape - mesh */</comment>
+  
+  
+  
+  <comment>
+    /** @brief Query information about a mesh
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  shape       The mesh to query
+    *  @param  mesh_info   The type of info to query
+    *  @param  size        The size of the buffer pointed by data
+    *  @param  data        The buffer to store queried info
+    *  @param  size_ret    Returns the size in bytes of the data being queried
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprMeshGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="mesh" type="rpr_shape"/>
+    <arg byte_align="4" byte_size="4" name="mesh_info" type="rpr_mesh_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="size_ret" is_out ="true" type="size_t *"/>
+  </function>
+  
+  <comment>
+    /** @brief Query information about a Curve
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  shape       The Curve to query
+    *  @param  rpr_curve_parameter   The type of info to query
+    *  @param  size        The size of the buffer pointed by data
+    *  @param  data        The buffer to store queried info
+    *  @param  size_ret    Returns the size in bytes of the data being queried
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprCurveGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="curve" type="rpr_curve"/>
+    <arg byte_align="0" byte_size="0" name="curve_info" type="rpr_curve_parameter"/>
+    <arg byte_align="0" byte_size="0" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="size_ret" is_out ="true" type="size_t *"/>
+  </function>
+    
+  <comment>
+    /** @brief Query information about a hetero volume
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  heteroVol       The heteroVolume to query
+    *  @param  heteroVol_info  The type of info to query
+    *  @param  size            The size of the buffer pointed by data
+    *  @param  data            The buffer to store queried info
+    *  @param  size_ret        Returns the size in bytes of the data being queried
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprHeteroVolumeGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVol" type="rpr_hetero_volume"/>
+    <arg byte_align="4" byte_size="4" name="heteroVol_info" type="rpr_hetero_volume_parameter"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="size_ret" is_out ="true" type="size_t *"/>
+  </function>
+  
+  
+    <comment>
+    /** @brief Query information about a Buffer
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  buffer       The heteroVolume to query
+    *  @param  buffer_info  The type of info to query
+    *  @param  size            The size of the buffer pointed by data
+    *  @param  data            The buffer to store queried info
+    *  @param  size_ret        Returns the size in bytes of the data being queried
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprBufferGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="buffer" type="rpr_buffer"/>
+    <arg byte_align="4" byte_size="4" name="buffer_info" type="rpr_buffer_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="size_ret" is_out ="true" type="size_t *"/>
+  </function>
+  
+  
+  
+  
+  
+  
+  
+  <comment>
+    /** @brief Query information about a mesh polygon
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  mesh        The mesh to query
+    *  @param  polygon_index The index of a polygon
+    *  @param  polygon_info The type of info to query
+    *  @param  size        The size of the buffer pointed by data
+    *  @param  data        The buffer to store queried info
+    *  @param  size_ret    Returns the size in bytes of the data being queried
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprMeshPolygonGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="mesh" type="rpr_shape"/>
+    <arg byte_align="8" byte_size="8" name="polygon_index" type="size_t"/>
+    <arg byte_align="4" byte_size="4" name="polygon_info" type="rpr_mesh_polygon_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="size_ret" is_out ="true" type="size_t *"/>
+  </function>
+  <comment>
+    /** @brief Get the parent shape for an instance
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  shape    The shape to get a parent shape from
+    *  @param  status   RPR_SUCCESS in case of success, error code otherwise
+    *  @return          Shape object
+    */
+  </comment>
+  <function name="rprInstanceGetBaseShape" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_shape" type="rpr_shape *"/>
+  </function>
+  <comment>/* rpr_light - point */</comment>
+  <comment>
+    /** @brief Create point light
+    *
+    *  Create analytic point light represented by a point in space.
+    *  Possible error codes:
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *
+    *  @param  context The context to create a light for
+    *  @param  status  RPR_SUCCESS in case of success, error code otherwise
+    *  @return         Light object
+    */
+  </comment>
+  <function name="rprContextCreatePointLight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_light" type="rpr_light *"/>
+  </function>
+  <comment>
+    /** @brief Set radiant power of a point light source
+    *
+    *  @param  r       R component of a radiant power vector
+    *  @param  g       G component of a radiant power vector
+    *  @param  b       B component of a radiant power vector
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprPointLightSetRadiantPower3f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="r" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="g" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="b" type="rpr_float"/>
+  </function>
+  <comment>/* rpr_light - spot */</comment>
+  <comment>
+    /** @brief Create spot light
+    *
+    *  Create analytic spot light
+    *
+    *  Possible error codes:
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *
+    *  @param  context The context to create a light for
+    *  @param  status  RPR_SUCCESS in case of success, error code otherwise
+    *  @return         Light object
+    */
+  </comment>
+  <function name="rprContextCreateSpotLight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light *" is_out="true"/>
+  </function>
+  <comment>
+    /** @brief Set radiant power of a spot light source
+    *
+    *  @param  r R component of a radiant power vector
+    *  @param  g G component of a radiant power vector
+    *  @param  b B component of a radiant power vector
+    *  @return   RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSpotLightSetRadiantPower3f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="r" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="g" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="b" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set cone shape for a spot light
+    *
+    * Spot light produces smooth penumbra in a region between inner and outer circles,
+    * the area inside the inner cicrle receives full power while the area outside the
+    * outer one is fully in shadow.
+    *
+    *  @param  iangle Inner angle of a cone in radians
+    *  @param  oangle Outer angle of a coner in radians, should be greater that or equal to inner angle
+    *  @return status RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSpotLightSetConeShape" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="iangle" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="oangle" type="rpr_float"/>
+  </function>
+  <comment>/* rpr_light - directional */</comment>
+  <comment>
+    /** @brief Create directional light
+    *
+    *  Create analytic directional light.
+    *  Possible error codes:
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *
+    *  @param  context The context to create a light for
+    *  @param  status  RPR_SUCCESS in case of success, error code otherwise
+    *  @return light id of a newly created light
+    */
+  </comment>
+  <function name="rprContextCreateDirectionalLight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_light" type="rpr_light *"/>
+  </function>
+  <comment>
+    /** @brief Set radiant power of a directional light source
+    *
+    *  @param  r R component of a radiant power vector
+    *  @param  g G component of a radiant power vector
+    *  @param  b B component of a radiant power vector
+    *  @return   RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprDirectionalLightSetRadiantPower3f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="r" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="g" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="b" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set softness of shadow produced by the light
+    *
+    *  @param  coeff value between [0;1]. 0.0 is sharp
+    *  @return   RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprDirectionalLightSetShadowSoftness" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="coeff" type="rpr_float"/>
+  </function>
+  <comment>/* rpr_light - environment */</comment>
+  <comment>
+    /** @brief Create an environment light
+    *
+    *  Environment light is a light based on lightprobe.
+    *  Possible error codes:
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *
+    *  @param  context The context to create a light for
+    *  @param  status  RPR_SUCCESS in case of success, error code otherwise
+    *  @return         Light object
+    */
+  </comment>
+  <function name="rprContextCreateEnvironmentLight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_light" type="rpr_light *"/>
+  </function>
+  <comment>
+    /** @brief Set image for an environment light
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *      RPR_ERROR_UNSUPPORTED_IMAGE_FORMAT
+    *
+    *  @param  env_light Environment light
+    *  @param  image     Image object to set
+    *  @return           RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprEnvironmentLightSetImage" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="env_light" type="rpr_light"/>
+    <arg byte_align="0" byte_size="0" name="image" type="rpr_image"/>
+  </function>
+  <comment>
+    /** @brief Set intensity scale or an env light
+    *
+    *  @param  env_light       Environment light
+    *  @param  intensity_scale Intensity scale
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprEnvironmentLightSetIntensityScale" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="env_light" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="intensity_scale" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set portal for environment light to accelerate convergence of indoor scenes
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  env_light Environment light
+    *  @param  portal    Portal mesh, might have multiple components
+    *  @return           RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprEnvironmentLightAttachPortal" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="env_light" type="rpr_light"/>
+    <arg byte_align="0" byte_size="0" name="portal" type="rpr_shape"/>
+  </function>
+  <comment>
+    /** @brief Remove portal for environment light.
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  env_light Environment light
+    *  @param  portal    Portal mesh, that have been added to light.
+    *  @return           RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprEnvironmentLightDetachPortal" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="env_light" type="rpr_light"/>
+    <arg byte_align="0" byte_size="0" name="portal" type="rpr_shape"/>
+  </function>
+  <comment>/* rpr_light - sky */</comment>
+  <comment>
+    /** @brief Create sky light
+    *
+    *  Analytical sky model
+    *  Possible error codes:
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *
+    *  @param  context The context to create a light for
+    *  @param  status  RPR_SUCCESS in case of success, error code otherwise
+    *  @return         Light object
+    */
+  </comment>
+  <function name="rprContextCreateSkyLight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_light" type="rpr_light *"/>
+  </function>
+  <comment>
+    /** @brief Set turbidity of a sky light
+    *
+    *  @param  skylight        Sky light
+    *  @param  turbidity       Turbidity value
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSkyLightSetTurbidity" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="skylight" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="turbidity" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set albedo of a sky light
+    *
+    *  @param  skylight        Sky light
+    *  @param  albedo          Albedo value
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSkyLightSetAlbedo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="skylight" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="albedo" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set scale of a sky light
+    *
+    *  @param  skylight        Sky light
+    *  @param  scale           Scale value
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSkyLightSetScale" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="skylight" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="scale" type="rpr_float"/>
+  </function>
+  
+    <comment>
+    /** @brief Set the direction of the sky light
+    *
+    *  @param  skylight        Sky light
+    *  @param  x               direction x
+    *  @param  y               direction y
+    *  @param  z               direction z
+    *  @return                 RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSkyLightSetDirection" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="skylight" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+	<arg byte_align="4" byte_size="4" name="y" type="rpr_float"/>
+	<arg byte_align="4" byte_size="4" name="z" type="rpr_float"/>
+  </function>
+  
+  
+  <comment>
+    /** @brief Set portal for sky light to accelerate convergence of indoor scenes
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  skylight  Sky light
+    *  @param  portal    Portal mesh, might have multiple components
+    *  @return           RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSkyLightAttachPortal" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="skylight" type="rpr_light"/>
+    <arg byte_align="0" byte_size="0" name="portal" type="rpr_shape"/>
+  </function>
+  <comment>
+    /** @brief Remove portal for Sky light.
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  env_light Sky light
+    *  @param  portal    Portal mesh, that have been added to light.
+    *  @return           RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSkyLightDetachPortal" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="skylight" type="rpr_light"/>
+    <arg byte_align="0" byte_size="0" name="portal" type="rpr_shape"/>
+  </function>
+  <comment>
+    /** @brief Create IES light
+    *
+    *  Create IES light
+    *
+    *  Possible error codes:
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *
+    *  @param  context The context to create a light for
+    *  @param  status  RPR_SUCCESS in case of success, error code otherwise
+    *  @return         Light object
+    */
+  </comment>
+  <function name="rprContextCreateIESLight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="light" is_out="true" type="rpr_light *"/>
+  </function>
+  <comment>
+    /** @brief Set radiant power of a IES light source
+    *
+    *  @param  r R component of a radiant power vector
+    *  @param  g G component of a radiant power vector
+    *  @param  b B component of a radiant power vector
+    *  @return   RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprIESLightSetRadiantPower3f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="r" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="g" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="b" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set image for an IES light
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *      RPR_ERROR_UNSUPPORTED_IMAGE_FORMAT : If the format of the IES file is not supported by Radeon ProRender.
+    *      RPR_ERROR_IO_ERROR : If the IES image path file doesn't exist.
+    *
+    *  @param  env_light     Environment light
+    *  @param  imagePath     Image path to set
+    *  @param  nx			  resolution X of the IES image
+    *  @param  ny            resolution Y of the IES image
+    *  @return               RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprIESLightSetImageFromFile" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="env_light" type="rpr_light"/>
+    <arg byte_align="0" byte_size="0" name="imagePath" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="nx" type="rpr_int"/>
+    <arg byte_align="4" byte_size="4" name="ny" type="rpr_int"/>
+  </function>
+  <comment>
+    /** @brief Set image for an IES light
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *      RPR_ERROR_UNSUPPORTED_IMAGE_FORMAT : If the format of the IES data is not supported by Radeon ProRender.
+    *
+    *  @param  env_light     Environment light
+    *  @param  iesData       Image data string defining the IES. null terminated string. IES format.
+    *  @param  nx			  resolution X of the IES image
+    *  @param  ny            resolution Y of the IES image
+    *  @return               RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprIESLightSetImageFromIESdata" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="env_light" type="rpr_light"/>
+    <arg byte_align="0" byte_size="0" name="iesData" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="nx" type="rpr_int"/>
+    <arg byte_align="4" byte_size="4" name="ny" type="rpr_int"/>
+  </function>
+  <comment>/* rpr_light */</comment>
+  <comment>
+    /** @brief Query information about a light
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  light    The light to query
+    *  @param  light_info The type of info to query
+    *  @param  size     The size of the buffer pointed by data
+    *  @param  data     The buffer to store queried info
+    *  @param  size_ret Returns the size in bytes of the data being queried
+    *  @return          RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprLightGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+    <arg byte_align="4" byte_size="4" name="info" type="rpr_light_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="size_ret" type="size_t *" is_out="true"/>
+  </function>
+  <comment>/* rpr_scene */</comment>
+  <comment>
+    /** @brief Remove all objects from a scene
+    *          Also detaches the camera
+    *
+    *  A scene is essentially a collection of shapes, lights and volume regions.
+    *
+    *  @param  scene   The scene to clear
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneClear" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+  </function>
+  <comment>
+    /** @brief Attach a shape to the scene
+    *
+    *  A scene is essentially a collection of shapes, lights and volume regions.
+    *
+    *  @param  scene  The scene to attach
+    *  @param  shape  The shape to attach
+    *  @return        RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneAttachShape" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+  </function>
+  <comment>
+    /** @brief Detach a shape from the scene
+    *
+    *  A scene is essentially a collection of shapes, lights and volume regions.
+    *
+    *  @param  scene   The scene to dettach from
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneDetachShape" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+  </function>
+
+
+
+  <comment>
+    /** @brief Attach a heteroVolume to the scene
+    *
+    *  A scene is essentially a collection of shapes, lights and volume regions.
+    *
+    *  @param  scene  The scene to attach
+    *  @param  heteroVolume  The heteroVolume to attach
+    *  @return        RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneAttachHeteroVolume" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+  </function>
+  <comment>
+    /** @brief Detach a heteroVolume from the scene
+    *
+    *  A scene is essentially a collection of shapes, lights and volume regions.
+    *
+    *  @param  scene   The scene to dettach from
+    *  @return         RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneDetachHeteroVolume" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+  </function>
+
+
+  <function name="rprSceneAttachCurve" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="curve" type="rpr_curve"/>
+  </function>
+  <function name="rprSceneDetachCurve" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="curve" type="rpr_curve"/>
+  </function>
+    <function name="rprCurveSetMaterial" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="curve" type="rpr_curve"/>
+    <arg byte_align="0" byte_size="0" name="material" type="rpr_material_node"/>
+  </function>
+
+  
+  <function name="rprContextCreateCurve" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="out_curve" is_out="true" type="rpr_curve *"/>
+    <arg byte_align="0" byte_size="0" name="num_controlPoints" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="controlPointsData" type="rpr_float const *"/>
+    <arg byte_align="0" byte_size="0" name="controlPointsStride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="num_indices" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="indicesData" type="rpr_uint const *"/>
+    <arg byte_align="0" byte_size="0" name="radius" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="textureCoordU" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="textureCoordV" type="rpr_float"/>
+  </function>
+
+	
+  <function name="rprContextCreateCurveBatch" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="nbCurves" type="rpr_uint"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_curve" type="rpr_curve *"/>
+    <arg byte_align="0" byte_size="0" name="num_controlPoints" type="size_t const *"/>
+    <arg byte_align="0" byte_size="0" name="controlPointsData" type="rpr_float const *"/>
+    <arg byte_align="0" byte_size="0" name="controlPointsStride" type="rpr_int"/>
+    <arg byte_align="0" byte_size="0" name="num_indices" type="size_t const *"/>
+    <arg byte_align="0" byte_size="0" name="indicesData" type="rpr_uint const *"/>
+    <arg byte_align="0" byte_size="0" name="radius" type="rpr_float const *"/>
+    <arg byte_align="0" byte_size="0" name="textureCoordU" type="rpr_float const *"/>
+    <arg byte_align="0" byte_size="0" name="textureCoordV" type="rpr_float const *"/>
+  </function>
+
+  <comment>
+    /** @brief Attach a light to the scene
+    *
+    *  A scene is essentially a collection of shapes, lights and volume regions
+    *
+    *  @param  scene  The scene to attach
+    *  @param  light  The light to attach
+    *  @return        RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneAttachLight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+  </function>
+  <comment>
+    /** @brief Detach a light from the scene
+    *
+    *  A scene is essentially a collection of shapes, lights and volume regions
+    *
+    *  @param  scene  The scene to dettach from
+    *  @param  light  The light to detach
+    *  @return        RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneDetachLight" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+  </function>
+  <comment>
+    /** @brief Query information about a scene
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  scene    The scene to query
+    *  @param  info     The type of info to query
+    *  @param  size     The size of the buffer pointed by data
+    *  @param  data     The buffer to store queried info
+    *  @param  size_ret Returns the size in bytes of the data being queried
+    *  @return          RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="4" byte_size="4" name="info" type="rpr_scene_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="size_ret" is_out="true" type="size_t *"/>
+  </function>
+  <comment>
+    /** @brief Get background override light
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  scene       The scene to set background for
+    *  @param  overrride   overrride type
+    *  @param  out_light   light returned
+    *  @return        RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneGetEnvironmentOverride" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="4" byte_size="4" name="overrride" type="rpr_environment_override"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_light" type="rpr_light *"/>
+  </function>
+  <comment>
+    /** @brief Set background light for the scene which does not affect the scene lighting,
+    *    but gets shown as a background image
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  scene  The scene to set background for
+    *  @param  light  Background light
+    *  @return        RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneSetEnvironmentOverride" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="4" byte_size="4" name="overrride" type="rpr_environment_override"/>
+    <arg byte_align="0" byte_size="0" name="light" type="rpr_light"/>
+  </function>
+  <comment>
+    /** @brief Set background image for the scene which does not affect the scene lighting,
+    *    it is shown as view-independent rectangular background
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  scene  The scene to set background for
+    *  @param  image  Background image
+    *  @return        RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneSetBackgroundImage" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="image" type="rpr_image"/>
+  </function>
+  <comment>
+    /** @brief Get background image
+    *
+    *  @param  scene  The scene to get background image from
+    *  @param  status RPR_SUCCESS in case of success, error code otherwise
+    *  @return        Image object
+    */
+  </comment>
+  <function name="rprSceneGetBackgroundImage" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_image" type="rpr_image *"/>
+  </function>
+  <comment>
+    /** @brief Set camera for the scene
+    *
+    *  This is the main camera which for rays generation for the scene.
+    *
+    *  @param  scene  The scene to set camera for
+    *  @param  camera Camera
+    *  @return        RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprSceneSetCamera" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" name="camera" type="rpr_camera"/>
+  </function>
+  <comment>
+    /** @brief Get camera for the scene
+    *
+    *  @param  scene  The scene to get camera for
+    *  @param  status RPR_SUCCESS in case of success, error code otherwise
+    *  @return camera id for the camera if any, NULL otherwise
+    */
+  </comment>
+  <function name="rprSceneGetCamera" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="scene" type="rpr_scene"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_camera" type="rpr_camera *"/>
+  </function>
+  <comment>
+    /** @brief Query information about a framebuffer
+    *
+    *  The workflow is usually two-step: query with the data == NULL to get the required buffer size,
+    *  then query with size_ret == NULL to fill the buffer with the data
+    *   Possible error codes:
+    *      RPR_ERROR_INVALID_PARAMETER
+    *
+    *  @param  framebuffer  Framebuffer object to query
+    *  @param  info         The type of info to query
+    *  @param  size         The size of the buffer pointed by data
+    *  @param  data         The buffer to store queried info
+    *  @param  size_ret     Returns the size in bytes of the data being queried
+    *  @return              RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprFrameBufferGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="framebuffer" type="rpr_framebuffer"/>
+    <arg byte_align="4" byte_size="4" name="info" type="rpr_framebuffer_info"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="size_ret" type="size_t *"/>
+  </function>
+  <comment>
+    /** @brief Clear contents of a framebuffer to zero
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    *  The call is blocking and the image is ready when returned
+    *
+    *  @param  frame_buffer  Framebuffer to clear
+    *  @return              RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprFrameBufferClear" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="frame_buffer" type="rpr_framebuffer"/>
+  </function>
+  <comment>
+    /** @brief Save frame buffer to file
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    *  @param  frame_buffer Frame buffer to save
+    *  @param  path         Path to file
+    *  @return              RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprFrameBufferSaveToFile" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="frame_buffer" type="rpr_framebuffer"/>
+    <arg byte_align="0" byte_size="0" name="file_path" type="rpr_char const *"/>
+  </function>
+  <comment>
+    /** @brief Resolve framebuffer
+    *
+    *   Resolve applies AA filters and tonemapping operators to the framebuffer data
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    * Note: in RPR API 1.310, the default value of normalizeOnly has been removed.
+    *       Set it to FALSE, if you don't use this argument.
+    *
+    */
+  </comment>
+  <function name="rprContextResolveFrameBuffer" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="src_frame_buffer" type="rpr_framebuffer"/>
+    <arg byte_align="0" byte_size="0" name="dst_frame_buffer" type="rpr_framebuffer"/>
+    <arg byte_align="4" byte_size="4" name="normalizeOnly" type="rpr_bool" />
+  </function>
+  <comment>
+    /** @brief Create material system
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    */
+  </comment>
+  <function name="rprContextCreateMaterialSystem" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_context" type="rpr_context"/>
+    <arg byte_align="4" byte_size="4" name="type" type="rpr_material_system_type"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_matsys" type="rpr_material_system *"/>
+  </function>
+  <comment>
+    /** @brief Create material node
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    */
+  </comment>
+  <function name="rprMaterialSystemGetSize" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_size" type="rpr_uint *"/>
+  </function>
+  <comment>
+    /** @brief Returns the number of material nodes for a given material system
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    */
+  </comment>
+  <function name="rprMaterialSystemCreateNode" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_matsys" type="rpr_material_system"/>
+    <arg byte_align="4" byte_size="4" name="in_type" type="rpr_material_node_type"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_node" type="rpr_material_node *"/>
+  </function>
+  <comment>
+    /** @brief Connect nodes
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    */
+  </comment>
+  <function name="rprMaterialNodeSetInputN" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_node" type="rpr_material_node"/>
+    <arg byte_align="0" byte_size="0" name="in_input" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="in_input_node" type="rpr_material_node"/>
+  </function>
+  <comment>
+    /** @brief Set float input value
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    */
+  </comment>
+  <function name="rprMaterialNodeSetInputF" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_node" type="rpr_material_node"/>
+    <arg byte_align="0" byte_size="0" name="in_input" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="in_value_x" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="in_value_y" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="in_value_z" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="in_value_w" type="rpr_float"/>
+  </function>
+  <comment>
+    /** @brief Set uint input value
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    */
+  </comment>
+  <function name="rprMaterialNodeSetInputU" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_node" type="rpr_material_node"/>
+    <arg byte_align="0" byte_size="0" name="in_input" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="in_value" type="rpr_uint"/>
+  </function>
+  <comment>
+    /** @brief Set image input value
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    */
+  </comment>
+  <function name="rprMaterialNodeSetInputImageData" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_node" type="rpr_material_node"/>
+    <arg byte_align="0" byte_size="0" name="in_input" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="image" type="rpr_image"/>
+  </function>
+
+  <function name="rprMaterialNodeSetInputBufferData" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_node" type="rpr_material_node"/>
+    <arg byte_align="0" byte_size="0" name="in_input" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="buffer" type="rpr_buffer"/>
+  </function>
+
+
+  <function name="rprMaterialNodeGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_node" type="rpr_material_node"/>
+    <arg byte_align="4" byte_size="4" name="in_info" type="rpr_material_node_info"/>
+    <arg byte_align="8" byte_size="8" name="in_size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="in_data" type="void *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_size" type="size_t *"/>
+  </function>
+  <function name="rprMaterialNodeGetInputInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="in_node" type="rpr_material_node"/>
+    <arg byte_align="4" byte_size="4" name="in_input_idx" type="rpr_int"/>
+    <arg byte_align="4" byte_size="4" name="in_info" type="rpr_material_node_input_info"/>
+    <arg byte_align="8" byte_size="8" name="in_size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="in_data" type="void *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_size" type="size_t *"/>
+  </function>
+
+
+
+
+  <function name="rprContextCreateComposite" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="in_type" type="rpr_composite_type"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_composite" type="rpr_composite *"/>
+  </function>
+  
+    <function name="rprContextCreateLUTFromFile" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="fileLutPath" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="out_lut" is_out="true" type="rpr_lut *"/>
+  </function>
+   <function name="rprContextCreateLUTFromData" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+	<arg byte_align="0" byte_size="0" name="lutData" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="out_lut" is_out="true" type="rpr_lut *"/>
+  </function>
+  
+
+  <function name="rprCompositeSetInputFb" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="composite" type="rpr_composite"/>
+    <arg byte_align="0" byte_size="0" name="inputName" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="input" type="rpr_framebuffer"/>
+  </function>
+
+  <function name="rprCompositeSetInputC" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="composite" type="rpr_composite"/>
+    <arg byte_align="0" byte_size="0" name="inputName" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="input" type="rpr_composite"/>
+  </function>
+  
+    <function name="rprCompositeSetInputLUT" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="composite" type="rpr_composite"/>
+    <arg byte_align="0" byte_size="0" name="inputName" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="input" type="rpr_lut"/>
+  </function>
+
+
+  <function name="rprCompositeSetInput4f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="composite" type="rpr_composite"/>
+    <arg byte_align="0" byte_size="0" name="inputName" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="x" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="y" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="z" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="w" type="rpr_float"/>
+  </function>
+
+  <function name="rprCompositeSetInput1u" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="composite" type="rpr_composite"/>
+    <arg byte_align="0" byte_size="0" name="inputName" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="value" type="rpr_uint"/>
+  </function>
+
+  <function name="rprCompositeSetInputOp" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="composite" type="rpr_composite"/>
+    <arg byte_align="0" byte_size="0" name="inputName" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="op" type="rpr_material_node_arithmetic_operation"/>
+  </function>
+
+  <function name="rprCompositeCompute" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="composite" type="rpr_composite"/>
+    <arg byte_align="0" byte_size="0" name="fb" type="rpr_framebuffer"/>
+  </function>
+
+  <function name="rprCompositeGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="composite" type="rpr_composite"/>
+    <arg byte_align="0" byte_size="0" name="composite_info" type="rpr_composite_info"/>
+    <arg byte_align="0" byte_size="0" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void * "/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="size_ret" type="size_t *"/>
+  </function>
+
+
+  <comment>
+    /** @brief Delete object
+    *
+    *  rprObjectDelete(obj) deletes 'obj' from memory.
+    *  User has to make sure that 'obj' will not be used anymore after this call.
+    *
+    *   Possible error codes:
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *
+    */
+  </comment>
+  <function name="rprObjectDelete" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="obj" type="void *"/>
+  </function>
+
+
+
+
+
+  <comment>
+    /** @brief Set material node name
+    *
+    *
+    *  @param  node        Node to set the name for
+    *  @param  name       NULL terminated string name
+    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    */
+  </comment>
+  <function name="rprObjectSetName" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="node" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+  </function>
+  <comment>/* rpr_post_effect */</comment>
+  <comment>
+    /** @brief Create post effect
+    *
+    *  Create analytic point light represented by a point in space.
+    *  Possible error codes:
+    *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
+    *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
+    *
+    *  @param  context The context to create a light for
+    *  @param  status  RPR_SUCCESS in case of success, error code otherwise
+    *  @return         Light object
+    */
+  </comment>
+  <function name="rprContextCreatePostEffect" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="4" byte_size="4" name="type" type="rpr_post_effect_type"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_effect" type="rpr_post_effect *"/>
+  </function>
+  <function name="rprContextAttachPostEffect" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="effect" type="rpr_post_effect"/>
+  </function>
+  <function name="rprContextDetachPostEffect" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="effect" type="rpr_post_effect"/>
+  </function>
+  <function name="rprPostEffectSetParameter1u" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="effect" type="rpr_post_effect"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_uint"/>
+  </function>
+  <function name="rprPostEffectSetParameter1f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="effect" type="rpr_post_effect"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+  </function>
+  <function name="rprPostEffectSetParameter3f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="effect" type="rpr_post_effect"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="y" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="z" type="rpr_float"/>
+  </function>
+  <function name="rprPostEffectSetParameter4f" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="effect" type="rpr_post_effect"/>
+    <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
+    <arg byte_align="4" byte_size="4" name="x" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="y" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="z" type="rpr_float"/>
+    <arg byte_align="4" byte_size="4" name="w" type="rpr_float"/>
+  </function>
+  <function name="rprContextGetAttachedPostEffectCount" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="nb" type="rpr_uint * "/>
+  </function>
+  <function name="rprContextGetAttachedPostEffect" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" name="i" type="rpr_uint"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_effect" type="rpr_post_effect *"/>
+  </function>
+  <function name="rprPostEffectGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="effect" type="rpr_post_effect"/>
+    <arg byte_align="0" byte_size="0" name="info" type="rpr_post_effect_info"/>
+    <arg byte_align="0" byte_size="0" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type=" void * "/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="size_ret" type="size_t * "/>
+  </function>
+
+
+  <function name="rprContextCreateHeteroVolume" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_heteroVolume" type="rpr_hetero_volume *"/>
+    <arg byte_align="0" byte_size="0" name="gridSizeX" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="gridSizeY" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="gridSizeZ" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="indicesList" type="void const *"/>
+    <arg byte_align="0" byte_size="0" name="numberOfIndices" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="indicesListTopology" type="rpr_hetero_volume_indices_topology"/>
+    <arg byte_align="0" byte_size="0" name="gridData" type="void const *"/>
+    <arg byte_align="0" byte_size="0" name="gridDataSizeByte" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="gridDataTopology___unused" type="rpr_uint"/>
+  </function>
+
+  <function name="rprShapeSetHeteroVolume" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+  </function>
+
+  <function name="rprHeteroVolumeSetTransform" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="transpose" type="rpr_bool"/>
+    <arg byte_align="0" byte_size="0" name="transform" type="rpr_float const *"/>
+  </function>
+  
+  <function name="rprHeteroVolumeSetEmission" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="r" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="g" type="rpr_float"/>
+	<arg byte_align="0" byte_size="0" name="b" type="rpr_float"/>
+  </function>
+  
+   <function name="rprHeteroVolumeSetAlbedo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="r" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="g" type="rpr_float"/>
+	<arg byte_align="0" byte_size="0" name="b" type="rpr_float"/>
+  </function>
+  
+  <function name="rprHeteroVolumeSetFilter" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="filter" type="rpr_hetero_volume_filter"/>
+  </function>
+  
+
+
+</registry>
