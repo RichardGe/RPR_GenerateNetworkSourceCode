@@ -155,6 +155,73 @@ void ExportToOpcodeH(const std::vector<RPR_FUNCTION>& rprFnList, const std::map<
 	return;
 }
 
+void ExportToNetworkFunctionCaller(const std::vector<RPR_FUNCTION>& rprFnList, const std::map<std::string,std::string>& typedefFromXML)
+{
+	std::cout<<"ExportToNetworkFunctionCaller..." << std::endl;
+
+	std::ofstream networkH;
+	networkH.open ("RprApiNetworkFunctionCaller.h" , std::ofstream::binary  |  std::ofstream::trunc );
+
+	if ( !networkH.is_open() || networkH.fail() )
+	{
+		std::cout<<"ERROR open out file" << std::endl;
+		return;
+	}
+
+	for(int i=0; i<30;i++)
+		networkH <<"// \r\n";
+	networkH <<headerMessageComment;
+	for(int i=0; i<30;i++)
+		networkH <<"// \r\n";
+
+
+	networkH << "#pragma once\r\n\r\n\r\n";
+
+
+	for(int iFn=0; iFn<rprFnList.size(); iFn++)
+	{
+		networkH << "#ifdef RPR_USE_RPRNET\r\n";
+		networkH << "#define NETWORK_CALL_";
+		networkH << rprFnList[iFn].fnName ;
+		networkH << "(node___) \\\r\n";
+		networkH << "{\\\r\n";
+		networkH << "if ( node___ )\\\r\n";
+		networkH << "{\\\r\n";
+		networkH << "FrNode* ctx__ = (node___->GetType() == NodeTypes::Context) ? (node___) : (node___->GetProperty<FrNode*>(FR_NODE_CONTEXT));\\\r\n";
+		networkH << "if ( ctx__ )\\\r\n";
+		networkH << "{\\\r\n";
+		networkH << "std::shared_ptr<RprApiNetwork> networkMgr = ctx__->GetProperty<  std::shared_ptr<RprApiNetwork>  >(FR_NETWORK_MANAGER);\\\r\n";
+		networkH << "if ( networkMgr ) { networkMgr->api_";
+		networkH << rprFnList[iFn].fnName ;
+		networkH << "(";
+		for(int iArg=0; iArg<rprFnList[iFn].args.size(); iArg++)
+		{
+			networkH << rprFnList[iFn].args[iArg].argName;
+			if ( iArg != rprFnList[iFn].args.size()-1 )
+			{
+				networkH << " , ";
+			}
+		}
+		networkH << "); }\\\r\n";
+
+		networkH << "}\\\r\n";
+		networkH << "}\\\r\n";
+		networkH << "}\r\n";
+		networkH << "#else\r\n";
+		networkH << "#define NETWORK_CALL_";
+		networkH <<  rprFnList[iFn].fnName;
+		networkH << "(node___)\r\n";
+		networkH << "#endif\r\n\r\n";
+
+	}
+
+	networkH << "/// END OF FILE\r\n";
+
+	networkH.close();
+
+	return;
+
+}
 
 void ExportToNetworkH(const std::vector<RPR_FUNCTION>& rprFnList, const std::map<std::string,std::string>& typedefFromXML)
 {
@@ -643,8 +710,9 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 			networkCpp << "\t#pragma pack(pop)\r\n";
 			networkCpp << "\t\r\n";
 			networkCpp << "\tconst int sizeofStruct = sizeof(api_arguments);\r\n";
-			networkCpp << "\tPrepareBuffer(sizeofStruct);\r\n";
-			networkCpp << "\tapi_arguments* argInput = (api_arguments*)m_bufferToSend.memory;\r\n";
+			//networkCpp << "\tPrepareBuffer(sizeofStruct);\r\n";
+			//networkCpp << "\tapi_arguments* argInput = (api_arguments*)m_bufferToSend.memory;\r\n";
+			networkCpp << "\tapi_arguments* argInput = (api_arguments*)PrepareCommand(sizeof(api_arguments));\r\n";
 			networkCpp << "\targInput->opCode = RPRNET_OPCODE_"+rprFnList[iFn].fnName+";\r\n";
 			networkCpp << fillStruct;
 			networkCpp << "\tm_bufferToSend.sizeleft = sizeofStruct;\r\n";
@@ -681,6 +749,7 @@ int main()
 	ExportToOpcodeH(rprFnList,typedefFromXML);
 	ExportToNetworkH(rprFnList,typedefFromXML);
 	ExportToNetworkCpp(rprFnList,typedefFromXML);
+	ExportToNetworkFunctionCaller(rprFnList,typedefFromXML);
 
 	std::cout<<"Program End" << std::endl;
 
