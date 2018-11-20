@@ -248,6 +248,7 @@ void ExportToNetworkH(const std::vector<RPR_FUNCTION>& rprFnList, const std::map
 
 
 	networkH << "#pragma once\r\n";
+	networkH << "#ifdef RPR_USE_RPRNET\r\n";
 	networkH << "#include \"RprNetwork.h\"\r\n";
 	networkH << "class RprApiNetwork : public RprNetwork\r\n{\r\npublic:\r\n";
 	
@@ -277,6 +278,7 @@ void ExportToNetworkH(const std::vector<RPR_FUNCTION>& rprFnList, const std::map
 
 	networkH << "\r\n};\r\n";
 
+	networkH << "#endif // ifdef RPR_USE_RPRNET\r\n";
 	networkH.close();
 
 	return;
@@ -303,6 +305,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 		networkCpp <<"// \r\n";
 
 
+	networkCpp << "#ifdef RPR_USE_RPRNET\r\n";
 	networkCpp << "#include \"RprApiNetwork.h\"\r\n";
 	networkCpp << "#include \"RprApiNetworkOpcode.h\"\r\n";
 	for(int iFn=0; iFn<rprFnList.size(); iFn++)
@@ -728,6 +731,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 
 	}
 
+	networkCpp << "#endif // ifdef RPR_USE_RPRNET\r\n";
 
 	networkCpp.close();
 
