@@ -1,4 +1,4 @@
-"# RPR_GenerateNetworkSourceCode" 
+# RPR_GenerateNetworkSourceCode" 
 
 Generates 
 rprApiNetworkOpcode.h
