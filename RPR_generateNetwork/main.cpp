@@ -365,7 +365,8 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 
 
 			networkCpp << "\t//if a config is missing, return directly\r\n";
-			networkCpp << "\tif (  m_address == \"\" || m_port == \"\" || m_sessionid == \"\" || m_renderid == \"\" )\r\n" ;
+			//networkCpp << "\tif (  m_address == \"\" || m_port == \"\" || m_sessionid == \"\" || m_renderid == \"\" )\r\n" ;
+			networkCpp << "\tif (  !NetworkValuesReady() )\r\n" ;
 			networkCpp << "\t\treturn RPR_SUCCESS;\r\n";
 			networkCpp << "\tm_bufferReceiver.cursor = 0;\r\n";
 			networkCpp << "\t\r\n";
@@ -426,6 +427,19 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					fillStruct += rprFnList[iFn].args[iArg].argName;
 					fillStruct += ";\r\n";
 
+
+					fillStruct += "\tchain::Arg* blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += " = blockNewCall->add_args(); blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += "->set_value((const void*)&";
+					fillStruct += rprFnList[iFn].args[iArg].argName;
+					fillStruct += ",sizeof(";
+					fillStruct += rprFnList[iFn].args[iArg].argName;
+					fillStruct += "));\r\n";
+
+
+
 				}
 				else if ( 
 					!isOut
@@ -457,6 +471,17 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					fillStruct += rprFnList[iFn].args[iArg].argName;
 					fillStruct += ";\r\n";
 
+
+					fillStruct += "\tchain::Arg* blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += " = blockNewCall->add_args(); blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += "->set_value((const void*)&";
+					fillStruct += rprFnList[iFn].args[iArg].argName;
+					fillStruct += ",sizeof(";
+					fillStruct += rprFnList[iFn].args[iArg].argName;
+					fillStruct += "));\r\n";
+
 				
 				}
 				else if ( 
@@ -487,6 +512,19 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					fillStruct += "\targInput->" + argName + " = (void*)(*";
 					fillStruct += rprFnList[iFn].args[iArg].argName;
 					fillStruct += ");\r\n";
+
+
+					fillStruct += "\tchain::Arg* blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += " = blockNewCall->add_args(); blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += "->set_value((const void*)&";
+					fillStruct += rprFnList[iFn].args[iArg].argName;
+					fillStruct += ",sizeof(";
+					fillStruct += rprFnList[iFn].args[iArg].argName;
+					fillStruct += "));\r\n";
+
+
 				}
 
 				else if (
@@ -507,12 +545,29 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 						fillStruct += "\tPushNewBinData_texcoords(argInput->";
 						fillStruct += argName;
 						fillStruct += ", texcoords ,   numberOfTexCoordLayers , num_texcoords  ,texcoord_stride );\r\n";
+
+
+						fillStruct += "\tchain::Arg* blockArg_";
+						fillStruct += std::to_string(iArg);
+						fillStruct += " = blockNewCall->add_args();";
+						fillStruct += "\tPushNewBinData_texcoords2(";
+						fillStruct += "blockArg_";
+						fillStruct += std::to_string(iArg);
+						fillStruct += ", texcoords ,   numberOfTexCoordLayers , num_texcoords  ,texcoord_stride );\r\n";
 					}
 					else if (  ( rprFnList[iFn].fnName == "rprContextCreateMeshEx" ||  rprFnList[iFn].fnName == "rprContextCreateMeshEx2")
 						&& rprFnList[iFn].args[iArg].argName == "texcoord_indices" )
 					{
 						fillStruct += "\tPushNewBinData_texcoord_indices(argInput->";
 						fillStruct += argName;
+						fillStruct += ", texcoord_indices  ,   numberOfTexCoordLayers ,  num_faces,   num_face_vertices,  tidx_stride );\r\n";
+
+						fillStruct += "\tchain::Arg* blockArg_";
+						fillStruct += std::to_string(iArg);
+						fillStruct += " = blockNewCall->add_args();";
+						fillStruct += "\tPushNewBinData_texcoord_indices2(";
+						fillStruct += "blockArg_";
+						fillStruct += std::to_string(iArg);
 						fillStruct += ", texcoord_indices  ,   numberOfTexCoordLayers ,  num_faces,   num_face_vertices,  tidx_stride );\r\n";
 					}
 					else
@@ -556,9 +611,10 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					std::string sizeDataStr = "SIZE_TODO";
 					if ( type == "rpr_char const *" )
 					{
-						sizeDataStr = "strlen(";
+						sizeDataStr = rprFnList[iFn].args[iArg].argName;
+						sizeDataStr += " ? ( strlen(";
 						sizeDataStr += rprFnList[iFn].args[iArg].argName;
-						sizeDataStr += ")+1";
+						sizeDataStr += ")+1) : 0";
 					}
 					else if ( rprFnList[iFn].fnName == "rprCreateContext" && rprFnList[iFn].args[iArg].argName == "pluginIDs" )
 						sizeDataStr = "0";
@@ -688,6 +744,23 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					//fillStruct += "\targInput->" + argName + " = ";
 					//fillStruct += "_NETWORKBUFFER\r\n";
 
+
+
+					fillStruct += "\tchain::Arg* blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += " = blockNewCall->add_args();";
+					fillStruct += "PushNewBinData2(blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += ",(void*)";
+					if ( type == "rpr_image_format const" || type == "rpr_framebuffer_format const" )
+					{
+						fillStruct += "&";
+					}
+					fillStruct += rprFnList[iFn].args[iArg].argName;
+					fillStruct += ",";
+					fillStruct += sizeDataStr;
+					fillStruct += ");\r\n";
+
 					int aa=0;
 				}
 				else
@@ -699,6 +772,12 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					fillStruct += " //";
 					fillStruct += rprFnList[iFn].args[iArg].argName;
 					fillStruct += "\r\n";
+
+					fillStruct += "\tchain::Arg* blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += " = blockNewCall->add_args(); blockArg_";
+					fillStruct += std::to_string(iArg);
+					fillStruct += "->set_value(??????);\r\n";
 
 					int a=0;
 				}
@@ -715,6 +794,11 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 			networkCpp << "\tconst int sizeofStruct = sizeof(api_arguments);\r\n";
 			//networkCpp << "\tPrepareBuffer(sizeofStruct);\r\n";
 			//networkCpp << "\tapi_arguments* argInput = (api_arguments*)m_bufferToSend.memory;\r\n";
+			
+			networkCpp << "\t\r\n";
+			networkCpp << "\tchain::RprCall* blockNewCall = m_currentBlock.add_calls();\r\n";
+			networkCpp << "\tblockNewCall->set_func_name(\""+rprFnList[iFn].fnName+"\");\r\n\r\n";
+
 			networkCpp << "\tapi_arguments* argInput = (api_arguments*)PrepareCommand(sizeof(api_arguments));\r\n";
 			networkCpp << "\targInput->opCode = RPRNET_OPCODE_"+rprFnList[iFn].fnName+";\r\n";
 			networkCpp << fillStruct;
@@ -723,7 +807,13 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 			networkCpp << "\t\r\n";
 
 
+
+
+
 		}
+
+
+		
 
 
 		networkCpp << "\treturn RPR_SUCCESS;\r\n";
