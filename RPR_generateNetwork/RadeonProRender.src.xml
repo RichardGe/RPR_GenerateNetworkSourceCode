@@ -28,7 +28,7 @@
   
   <language_C def="extern_c" />
   
-  <define name="RPR_API_VERSION" value="0x010032200 "/>
+  <define name="RPR_API_VERSION" value="0x010032400 "/>
   <define name="RPR_API_VERSION_MINOR" value="_API_VER_MINOR_ "/>
 
   <group name ="Status" prefix ="RPR_" type ="rpr_status">
@@ -637,6 +637,9 @@
     <define name="RPR_POST_EFFECT_SIMPLE_TONEMAP_EXPOSURE" value="0x6 "/>
     <define name="RPR_POST_EFFECT_SIMPLE_TONEMAP_CONTRAST" value="0x7 "/>
     <define name="RPR_POST_EFFECT_SIMPLE_TONEMAP_ENABLE_TONEMAP" value="0x8 "/>
+    <define name="RPR_POST_EFFECT_BLOOM_RADIUS" value="0x9 "/>
+    <define name="RPR_POST_EFFECT_BLOOM_THRESHOLD" value="0x0a "/>
+    <define name="RPR_POST_EFFECT_BLOOM_WEIGHT" value="0x0b "/>
   </group>
   <group name ="Aov" prefix="RPR_AOV_" type="rpr_aov">
     <define name="RPR_AOV_COLOR" value="0x0 "/>
@@ -675,6 +678,7 @@
     <define name="RPR_POST_EFFECT_SIMPLE_TONEMAP" value="0x2 "/>
     <define name="RPR_POST_EFFECT_NORMALIZATION" value="0x3 "/>
     <define name="RPR_POST_EFFECT_GAMMA_CORRECTION" value="0x4 "/>
+    <define name="RPR_POST_EFFECT_BLOOM" value="0x5 "/>
   </group>
 
   <group name ="ColorSpace" prefix="RPR_COLOR_SPACE_" type="rpr_color_space">
@@ -779,6 +783,8 @@
     <define name="RPR_CURVE_INDICES_DATA" value="0x834 "/>
     <define name="RPR_CURVE_RADIUS" value="0x835 "/>
     <define name="RPR_CURVE_UV" value="0x836 "/>
+    <define name="RPR_CURVE_COUNT_CURVE" value="0x837 "/>
+    <define name="RPR_CURVE_SEGMENTS_PER_CURVE" value="0x838 "/>
   </group>
   
   
@@ -2900,33 +2906,44 @@
   </function>
 
   
+  <function name="rprCurveSetTransform" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="curve" type="rpr_curve"/>
+    <arg byte_align="0" byte_size="0" name="transpose" type="rpr_bool"/>
+    <arg byte_align="0" byte_size="0" name="transform" type="rpr_float const *"/>
+  </function>
+  
+
+
+
+
+
+<comment>
+    /** @brief Create a set of curves
+    *
+    *  A rpr_curve is a set of curves
+    *  A curve is a set of segments
+    *  A segment is always composed of 4 3D points
+    *
+    */
+  </comment>
   <function name="rprContextCreateCurve" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
-    <arg byte_align="0" byte_size="0" name="out_curve" is_out="true" type="rpr_curve *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_curve" type="rpr_curve *"/>
     <arg byte_align="0" byte_size="0" name="num_controlPoints" type="size_t"/>
     <arg byte_align="0" byte_size="0" name="controlPointsData" type="rpr_float const *"/>
     <arg byte_align="0" byte_size="0" name="controlPointsStride" type="rpr_int"/>
     <arg byte_align="0" byte_size="0" name="num_indices" type="size_t"/>
-    <arg byte_align="0" byte_size="0" name="indicesData" type="rpr_uint const *"/>
-    <arg byte_align="0" byte_size="0" name="radius" type="rpr_float"/>
-    <arg byte_align="0" byte_size="0" name="textureCoordU" type="rpr_float"/>
-    <arg byte_align="0" byte_size="0" name="textureCoordV" type="rpr_float"/>
-  </function>
-
-	
-  <function name="rprContextCreateCurveBatch" return_type="rpr_int">
-    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
-    <arg byte_align="0" byte_size="0" name="nbCurves" type="rpr_uint"/>
-    <arg byte_align="0" byte_size="0" is_out="true" name="out_curve" type="rpr_curve *"/>
-    <arg byte_align="0" byte_size="0" name="num_controlPoints" type="size_t const *"/>
-    <arg byte_align="0" byte_size="0" name="controlPointsData" type="rpr_float const *"/>
-    <arg byte_align="0" byte_size="0" name="controlPointsStride" type="rpr_int"/>
-    <arg byte_align="0" byte_size="0" name="num_indices" type="size_t const *"/>
+    <arg byte_align="0" byte_size="0" name="curveCount" type="rpr_uint"/>
     <arg byte_align="0" byte_size="0" name="indicesData" type="rpr_uint const *"/>
     <arg byte_align="0" byte_size="0" name="radius" type="rpr_float const *"/>
-    <arg byte_align="0" byte_size="0" name="textureCoordU" type="rpr_float const *"/>
-    <arg byte_align="0" byte_size="0" name="textureCoordV" type="rpr_float const *"/>
-  </function>
+    <arg byte_align="0" byte_size="0" name="textureUV" type="rpr_float const *"/>
+    <arg byte_align="0" byte_size="0" name="segmentPerCurve" type="rpr_int const *"/>
+</function>
+
+
+
+
+
 
   <comment>
     /** @brief Attach a light to the scene

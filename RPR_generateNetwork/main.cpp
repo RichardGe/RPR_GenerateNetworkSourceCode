@@ -709,6 +709,9 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					else if ( rprFnList[iFn].fnName == "rprCameraSetTransform" && rprFnList[iFn].args[iArg].argName == "transform" )
 						sizeDataStr = "sizeof(float)*16";
 
+					else if ( rprFnList[iFn].fnName == "rprCurveSetTransform" && rprFnList[iFn].args[iArg].argName == "transform" )
+						sizeDataStr = "sizeof(float)*16";
+
 					else if ( rprFnList[iFn].fnName == "rprShapeSetTransform" && rprFnList[iFn].args[iArg].argName == "transform" )
 						sizeDataStr = "sizeof(float)*16";
 
