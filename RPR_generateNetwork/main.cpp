@@ -307,7 +307,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 
 	networkCpp << "#ifdef RPR_USE_RPRNET\r\n";
 	networkCpp << "#include \"RprApiNetwork.h\"\r\n";
-	networkCpp << "#include \"RprApiNetworkOpcode.h\"\r\n";
+	//networkCpp << "#include \"RprApiNetworkOpcode.h\"\r\n";
 	for(int iFn=0; iFn<rprFnList.size(); iFn++)
 	{
 		networkCpp << rprFnList[iFn].returnType;
@@ -370,11 +370,11 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 			networkCpp << "\t\treturn RPR_SUCCESS;\r\n";
 			networkCpp << "\tm_bufferReceiver.cursor = 0;\r\n";
 			networkCpp << "\t\r\n";
-			networkCpp << "\t#pragma pack(push,1)\r\n";
-			networkCpp << "\tstruct api_arguments\r\n";
-			networkCpp << "\t{\r\n";
+			//networkCpp << "\t#pragma pack(push,1)\r\n";
+			//networkCpp << "\tstruct api_arguments\r\n";
+			//networkCpp << "\t{\r\n";
 
-			networkCpp << "\t\tunsigned char opCode;\r\n";
+			//networkCpp << "\t\tunsigned char opCode;\r\n";
 
 			std::string fillStruct = "";
 
@@ -382,7 +382,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 			{
 				std::string argName = "arg" + std::to_string(iArg);
 
-				networkCpp << "\t\t";
+				//networkCpp << "\t\t";
 
 				std::string type = rprFnList[iFn].args[iArg].type;
 
@@ -421,11 +421,11 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 				{
 					//std types
 
-					networkCpp << type ;
+					//networkCpp << type ;
 
-					fillStruct += "\targInput->" + argName + " = ";
-					fillStruct += rprFnList[iFn].args[iArg].argName;
-					fillStruct += ";\r\n";
+					//fillStruct += "\targInput->" + argName + " = ";
+					//fillStruct += rprFnList[iFn].args[iArg].argName;
+					//fillStruct += ";\r\n";
 
 
 					fillStruct += "\tchain::Arg* blockArg_";
@@ -465,11 +465,11 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 				{
 					// id representing RPR object
 
-					networkCpp << "void*";
+					//networkCpp << "void*";
 
-					fillStruct += "\targInput->" + argName + " = (void*)";
-					fillStruct += rprFnList[iFn].args[iArg].argName;
-					fillStruct += ";\r\n";
+					//fillStruct += "\targInput->" + argName + " = (void*)";
+					//fillStruct += rprFnList[iFn].args[iArg].argName;
+					//fillStruct += ";\r\n";
 
 
 					fillStruct += "\tchain::Arg* blockArg_";
@@ -507,11 +507,11 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 				{
 					// id representing RPR object
 
-					networkCpp << "void*";
+					//networkCpp << "void*";
 
-					fillStruct += "\targInput->" + argName + " = (void*)(*";
-					fillStruct += rprFnList[iFn].args[iArg].argName;
-					fillStruct += ");\r\n";
+					//fillStruct += "\targInput->" + argName + " = (void*)(*";
+					//fillStruct += rprFnList[iFn].args[iArg].argName;
+					//fillStruct += ");\r\n";
 
 
 					fillStruct += "\tchain::Arg* blockArg_";
@@ -536,15 +536,15 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					)
 					)
 				{
-					networkCpp << "uint64_t";
+					//networkCpp << "uint64_t";
 
 
 					if (  ( rprFnList[iFn].fnName == "rprContextCreateMeshEx" ||  rprFnList[iFn].fnName == "rprContextCreateMeshEx2")
 						&& rprFnList[iFn].args[iArg].argName == "texcoords" )
 					{
-						fillStruct += "\tPushNewBinData_texcoords(argInput->";
-						fillStruct += argName;
-						fillStruct += ", texcoords ,   numberOfTexCoordLayers , num_texcoords  ,texcoord_stride );\r\n";
+						//fillStruct += "\tPushNewBinData_texcoords(argInput->";
+						//fillStruct += argName;
+						//fillStruct += ", texcoords ,   numberOfTexCoordLayers , num_texcoords  ,texcoord_stride );\r\n";
 
 
 						fillStruct += "\tchain::Arg* blockArg_";
@@ -558,9 +558,9 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					else if (  ( rprFnList[iFn].fnName == "rprContextCreateMeshEx" ||  rprFnList[iFn].fnName == "rprContextCreateMeshEx2")
 						&& rprFnList[iFn].args[iArg].argName == "texcoord_indices" )
 					{
-						fillStruct += "\tPushNewBinData_texcoord_indices(argInput->";
-						fillStruct += argName;
-						fillStruct += ", texcoord_indices  ,   numberOfTexCoordLayers ,  num_faces,   num_face_vertices,  tidx_stride );\r\n";
+						//fillStruct += "\tPushNewBinData_texcoord_indices(argInput->";
+						//fillStruct += argName;
+						//fillStruct += ", texcoord_indices  ,   numberOfTexCoordLayers ,  num_faces,   num_face_vertices,  tidx_stride );\r\n";
 
 						fillStruct += "\tchain::Arg* blockArg_";
 						fillStruct += std::to_string(iArg);
@@ -572,7 +572,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					}
 					else
 					{
-						networkCpp << "????????????????";
+						//networkCpp << "????????????????";
 						fillStruct += "????????????????";
 					}
 
@@ -605,7 +605,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					)
 				{
 					// export on network as buffer
-					networkCpp << "uint64_t";
+					//networkCpp << "uint64_t";
 
 					
 					std::string sizeDataStr = "SIZE_TODO";
@@ -732,20 +732,18 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					}
 					
 
-					fillStruct += "\tPushNewBinData(argInput->";
-					fillStruct += argName;
-					fillStruct += ",(void*)";
-					if ( type == "rpr_image_format const" || type == "rpr_framebuffer_format const" )
-					{
-						fillStruct += "&";
-					}
-					fillStruct += rprFnList[iFn].args[iArg].argName;
-					fillStruct += ",";
-					fillStruct += sizeDataStr;
-					fillStruct += ");\r\n";
+					//fillStruct += "\tPushNewBinData(argInput->";
+					//fillStruct += argName;
+					//fillStruct += ",(void*)";
+					//if ( type == "rpr_image_format const" || type == "rpr_framebuffer_format const" )
+					//{
+					//	fillStruct += "&";
+					//}
+					//fillStruct += rprFnList[iFn].args[iArg].argName;
+					//fillStruct += ",";
+					//fillStruct += sizeDataStr;
+					//fillStruct += ");\r\n";
 
-					//fillStruct += "\targInput->" + argName + " = ";
-					//fillStruct += "_NETWORKBUFFER\r\n";
 
 
 
@@ -768,13 +766,13 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 				}
 				else
 				{
-					networkCpp << "????";
+					//networkCpp << "????";
 
-					fillStruct += "\targInput->" + argName + " = ";
-					fillStruct += "????";
-					fillStruct += " //";
-					fillStruct += rprFnList[iFn].args[iArg].argName;
-					fillStruct += "\r\n";
+					//fillStruct += "\targInput->" + argName + " = ";
+					//fillStruct += "????";
+					//fillStruct += " //";
+					//fillStruct += rprFnList[iFn].args[iArg].argName;
+					//fillStruct += "\r\n";
 
 					fillStruct += "\tchain::Arg* blockArg_";
 					fillStruct += std::to_string(iArg);
@@ -785,28 +783,26 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					int a=0;
 				}
 
-				networkCpp << " ";
-				networkCpp << argName;
-				networkCpp << ";\r\n";
+				//networkCpp << " ";
+				//networkCpp << argName;
+				//networkCpp << ";\r\n";
 
 
 			}
-			networkCpp << "\t};\r\n";
-			networkCpp << "\t#pragma pack(pop)\r\n";
-			networkCpp << "\t\r\n";
-			networkCpp << "\tconst int sizeofStruct = sizeof(api_arguments);\r\n";
-			//networkCpp << "\tPrepareBuffer(sizeofStruct);\r\n";
-			//networkCpp << "\tapi_arguments* argInput = (api_arguments*)m_bufferToSend.memory;\r\n";
-			
+			//networkCpp << "\t};\r\n";
+			//networkCpp << "\t#pragma pack(pop)\r\n";
+			//networkCpp << "\t\r\n";
+			//networkCpp << "\tconst int sizeofStruct = sizeof(api_arguments);\r\n";
+
 			networkCpp << "\t\r\n";
 			networkCpp << "\tchain::RprCall* blockNewCall = m_currentBlock.add_calls();\r\n";
 			networkCpp << "\tblockNewCall->set_func_name(\""+rprFnList[iFn].fnName+"\");\r\n\r\n";
 
-			networkCpp << "\tapi_arguments* argInput = (api_arguments*)PrepareCommand(sizeof(api_arguments));\r\n";
-			networkCpp << "\targInput->opCode = RPRNET_OPCODE_"+rprFnList[iFn].fnName+";\r\n";
+			//networkCpp << "\tapi_arguments* argInput = (api_arguments*)PrepareCommand(sizeof(api_arguments));\r\n";
+			//networkCpp << "\targInput->opCode = RPRNET_OPCODE_"+rprFnList[iFn].fnName+";\r\n";
 			networkCpp << fillStruct;
-			networkCpp << "\tm_bufferToSend.sizeleft = sizeofStruct;\r\n";
-			//networkCpp << "\tPushCommand( (const char*)argInput , sizeofStruct );\r\n";
+			//networkCpp << "\tm_bufferToSend.sizeleft = sizeofStruct;\r\n";
+
 			networkCpp << "\t\r\n";
 
 
@@ -843,7 +839,7 @@ int main()
 	
 	ExtractFunctionFromXML(rprFnList,typedefFromXML);
 	
-	ExportToOpcodeH(rprFnList,typedefFromXML);
+	//ExportToOpcodeH(rprFnList,typedefFromXML);
 	ExportToNetworkH(rprFnList,typedefFromXML);
 	ExportToNetworkCpp(rprFnList,typedefFromXML);
 	ExportToNetworkFunctionCaller(rprFnList,typedefFromXML);
