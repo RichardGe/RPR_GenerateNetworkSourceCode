@@ -518,9 +518,9 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					fillStruct += std::to_string(iArg);
 					fillStruct += " = blockNewCall->add_args(); blockArg_";
 					fillStruct += std::to_string(iArg);
-					fillStruct += "->set_value((const void*)&";
+					fillStruct += "->set_value((const void*)";
 					fillStruct += rprFnList[iFn].args[iArg].argName;
-					fillStruct += ",sizeof(";
+					fillStruct += ",sizeof(*";
 					fillStruct += rprFnList[iFn].args[iArg].argName;
 					fillStruct += "));\r\n";
 
