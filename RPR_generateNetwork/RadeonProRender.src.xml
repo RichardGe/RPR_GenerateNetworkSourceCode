@@ -2041,20 +2041,20 @@
   </comment>
   <function name="rprShapeSetMaterial" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
-    <arg byte_align="0" byte_size="0" name="node" type="rpr_material_node"/>
+    <arg byte_align="0" byte_size="0" name="materialNode" type="rpr_material_node"/>
   </function>
   <comment>
     /** @brief Set shape materials for specific faces
     *
     *  @param  shape	The shape to set the material for
-    *  @param  node 	The material to set
+    *  @param  materialNode 	The material to set
     *  @param  face_indices
     *  @return		RPR_SUCCESS in case of success, error code otherwise
     */
   </comment>
   <function name="rprShapeSetMaterialFaces" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
-    <arg byte_align="0" byte_size="0" name="node" type="rpr_material_node"/>
+    <arg byte_align="0" byte_size="0" name="materialNode" type="rpr_material_node"/>
     <arg byte_align="0" byte_size="0" name="face_indices" type="rpr_int const *"/>
     <arg byte_align="8" byte_size="8" name="num_faces" type="size_t"/>
   </function>
@@ -2068,7 +2068,7 @@
   </comment>
   <function name="rprShapeSetVolumeMaterial" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
-    <arg byte_align="0" byte_size="0" name="node" type="rpr_material_node"/>
+    <arg byte_align="0" byte_size="0" name="materialNode" type="rpr_material_node"/>
   </function>
   <comment>
     /** @brief Set shape linear motion
@@ -3379,13 +3379,13 @@
     /** @brief Set material node name
     *
     *
-    *  @param  node        Node to set the name for
-    *  @param  name       NULL terminated string name
-    *  @return             RPR_SUCCESS in case of success, error code otherwise
+    *  @param  objectNode    Node to set the name for
+    *  @param  name          NULL terminated string name
+    *  @return               RPR_SUCCESS in case of success, error code otherwise
     */
   </comment>
   <function name="rprObjectSetName" return_type="rpr_int">
-    <arg byte_align="0" byte_size="0" name="node" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="objectNode" type="void *"/>
     <arg byte_align="0" byte_size="0" name="name" type="rpr_char const *"/>
   </function>
   <comment>/* rpr_post_effect */</comment>
