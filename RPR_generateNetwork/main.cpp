@@ -814,7 +814,9 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 
 		
 
-
+		networkCpp << "\tEndApiFunction(\"";
+		networkCpp << rprFnList[iFn].fnName;
+		networkCpp << "\");\r\n";
 		networkCpp << "\treturn RPR_SUCCESS;\r\n";
 		networkCpp << "}\r\n";
 
