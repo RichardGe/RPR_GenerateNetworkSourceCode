@@ -304,6 +304,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 	for(int i=0; i<30;i++)
 		networkCpp <<"// \r\n";
 
+	networkCpp << "const int g_heteroVolume_componentCountPerLookup = 3; // this value shouldn't be modified\r\n";
 
 	networkCpp << "#ifdef RPR_USE_RPRNET\r\n";
 	networkCpp << "#include \"RprApiNetwork.h\"\r\n";
@@ -335,6 +336,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 			|| rprFnList[iFn].fnName == "rprMeshGetInfo"
 			|| rprFnList[iFn].fnName == "rprCurveGetInfo"
 			|| rprFnList[iFn].fnName == "rprHeteroVolumeGetInfo"
+			|| rprFnList[iFn].fnName == "rprGridGetInfo"
 			|| rprFnList[iFn].fnName == "rprBufferGetInfo"
 			|| rprFnList[iFn].fnName == "rprMeshPolygonGetInfo"
 			|| rprFnList[iFn].fnName == "rprLightGetInfo"
@@ -459,6 +461,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					||  type == "rpr_composite"
 					||  type == "rpr_lut"
 					||  type == "rpr_post_effect"
+					||  type == "rpr_grid"
 					|| type == "void *" && rprFnList[iFn].fnName == "rprObjectDelete" // special case : rprObjectDelete is void*
 					)
 					)
@@ -502,6 +505,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					||  type == "rpr_composite *"
 					||  type == "rpr_lut *"
 					||  type == "rpr_post_effect *"
+					||  type == "rpr_grid *"
 					)
 					)
 				{
@@ -588,7 +592,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					!isOut
 					&&
 					(  
-						type == "rpr_char const *" 
+						type == "rpr_char const *"  || type == "const rpr_char *" 
 					||  type == "rpr_int const *" 
 					||  type == "rpr_float const *" 
 					||  type == "rpr_uint const *"
@@ -609,7 +613,7 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 
 					
 					std::string sizeDataStr = "SIZE_TODO";
-					if ( type == "rpr_char const *" )
+					if ( type == "rpr_char const *" || type == "const rpr_char *"  )
 					{
 						sizeDataStr = rprFnList[iFn].args[iArg].argName;
 						sizeDataStr += " ? ( strlen(";
@@ -725,6 +729,20 @@ void ExportToNetworkCpp(const std::vector<RPR_FUNCTION>& rprFnList, const std::m
 					else if ( rprFnList[iFn].fnName == "rprShapeSetMaterialFaces" && rprFnList[iFn].args[iArg].argName == "face_indices" )
 						sizeDataStr = "num_faces*sizeof(rpr_int)";
 
+					else if ( rprFnList[iFn].fnName == "rprContextCreateGrid" && rprFnList[iFn].args[iArg].argName == "gridData" )
+						sizeDataStr = "gridDataSizeByte";
+
+					else if ( rprFnList[iFn].fnName == "rprHeteroVolumeSetEmissionLookup" && rprFnList[iFn].args[iArg].argName == "ptr" )
+						sizeDataStr = "g_heteroVolume_componentCountPerLookup*sizeof(float)*n";
+
+					else if ( rprFnList[iFn].fnName == "rprHeteroVolumeSetDensityLookup" && rprFnList[iFn].args[iArg].argName == "ptr" )
+						sizeDataStr = "g_heteroVolume_componentCountPerLookup*sizeof(float)*n";
+
+					else if ( rprFnList[iFn].fnName == "rprHeteroVolumeSetAlbedoLookup" && rprFnList[iFn].args[iArg].argName == "ptr" )
+						sizeDataStr = "g_heteroVolume_componentCountPerLookup*sizeof(float)*n";
+
+					else if ( rprFnList[iFn].fnName == "rprContextCreateGrid" && rprFnList[iFn].args[iArg].argName == "indicesList" )
+						sizeDataStr = "ComputeDataSize_rprContextCreateGrid_indicesList(indicesListTopology,numberOfIndices)";
 
 					else
 					{

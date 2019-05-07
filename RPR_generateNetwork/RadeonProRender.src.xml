@@ -2,12 +2,12 @@
 <registry>
   <comment copyright="true"> /*****************************************************************************\
 *
-*  Module Name    FireRender.h
-*  Project        FireRender Engine
+*  Module Name    RadeonProRender.h
+*  Project        AMD Radeon ProRender
 *
-*  Description    Fire Render Interface header
+*  Description    Radeon ProRender Interface header
 *
-*  Copyright 2017 Advanced Micro Devices, Inc.
+*  Copyright 2019 Advanced Micro Devices, Inc.
 *
 *  All rights reserved.  This notice is intended as a precaution against
 *  inadvertent publication and does not imply publication or any waiver
@@ -15,7 +15,8 @@
 *  year of creation of the work.
 *  @author Dmitry Kozlov (dmitry.kozlov@amd.com)
 *  @author Takahiro Harada (takahiro.harada@amd.com)
-*  @bug No known bugs.
+*  @author Richard Geslot (richard.geslot@amd.com)
+*
 *
 
 
@@ -28,7 +29,7 @@
   
   <language_C def="extern_c" />
   
-  <define name="RPR_API_VERSION" value="0x010032400 "/>
+  <define name="RPR_API_VERSION" value="0x010033300 "/>
   <define name="RPR_API_VERSION_MINOR" value="_API_VER_MINOR_ "/>
 
   <group name ="Status" prefix ="RPR_" type ="rpr_status">
@@ -106,6 +107,13 @@
     <define name="RPR_FILTER_LANCZOS" value="0x5 "/>
     <define name="RPR_FILTER_BLACKMANHARRIS" value="0x6 "/>
   </group>
+  
+  <group name ="ContextSamplerType" prefix="RPR_CONTEXT_SAMPLER_TYPE_" type="rpr_context_sampler_type">
+    <define name="RPR_CONTEXT_SAMPLER_TYPE_SOBOL" value="0x1 "/>
+    <define name="RPR_CONTEXT_SAMPLER_TYPE_RANDOM" value="0x2 "/>
+    <define name="RPR_CONTEXT_SAMPLER_TYPE_CMJ" value="0x3 "/>
+  </group>
+  
   <group name ="ShapeType" prefix="RPR_SHAPE_TYPE_" type="rpr_shape_type">
     <define name="RPR_SHAPE_TYPE_MESH" value="0x1 "/>
     <define name="RPR_SHAPE_TYPE_INSTANCE" value="0x2 "/>
@@ -120,10 +128,13 @@
   </group>
   <comment>/* rpr_object_info */</comment>
   <define name="RPR_OBJECT_NAME" value="0x777777 " type="rpr_object_info"/>
+
   <comment>/* rpr_context_properties */</comment>
   <define name="RPR_CONTEXT_CREATEPROP_CPU_THREAD_LIMIT" value="0x600 "/>
   <define name="RPR_CONTEXT_CREATEPROP_COMPILE_CALLBACK" value="0x601 "/>
   <define name="RPR_CONTEXT_CREATEPROP_COMPILE_USER_DATA" value="0x602 "/>
+  <define name="RPR_CONTEXT_CREATEPROP_SAMPLER_TYPE" value="0x603 "/>
+
   <group name ="ContextInfo" prefix="RPR_CONTEXT_" type="rpr_context_info">
     <define name="RPR_CONTEXT_CREATION_FLAGS" value="0x102 "/>
     <define name="RPR_CONTEXT_CACHE_PATH" value="0x103 "/>
@@ -205,10 +216,15 @@
     <define name="RPR_CONTEXT_USER_TEXTURE_2" value="0x14E "/>
     <define name="RPR_CONTEXT_USER_TEXTURE_3" value="0x14F "/>
     <define name="RPR_CONTEXT_MIPMAP_LOD_OFFSET" value="0x150 "/>
-    
+    <define name="RPR_CONTEXT_AO_RAY_COUNT" value="0x151 "/>
+    <define name="RPR_CONTEXT_SAMPLER_TYPE" value="0x152 "/>
+    <define name="RPR_CONTEXT_ADAPTIVE_SAMPLING_TILE_SIZE" value="0x153 "/>
+    <define name="RPR_CONTEXT_ADAPTIVE_SAMPLING_MIN_SPP" value="0x154 "/>
+    <define name="RPR_CONTEXT_ADAPTIVE_SAMPLING_THRESHOLD" value="0x155 "/>
+    <define name="RPR_CONTEXT_TILE_SIZE" value="0x156 "/>
   </group>
   <comment>/* last of the RPR_CONTEXT_* */</comment>
-  <define name="RPR_CONTEXT_MAX" value="0x151 "/>
+  <define name="RPR_CONTEXT_MAX" value="0x157 "/>
 
 
 	
@@ -537,7 +553,8 @@
     <define name="RPR_MATERIAL_INPUT_2" value="0x29 "/>
     <define name="RPR_MATERIAL_INPUT_3" value="0x2a "/>
     <define name="RPR_MATERIAL_INPUT_4" value="0x2b "/>
-    <define name="RPR_MATERIAL_INPUT_MAX" value="0x2c "/>
+    <define name="RPR_MATERIAL_INPUT_SCHLICK_APPROXIMATION" value="0x2c "/>
+    <define name="RPR_MATERIAL_INPUT_MAX" value="0x2d "/>
   </group>
   <group name ="MaterialStandardInput" prefix="RPR_MATERIAL_STANDARD_INPUT_" type="rpr_material_node_input">
     <define name="RPR_MATERIAL_STANDARD_INPUT_DIFFUSE_COLOR" value="0x112 "/>
@@ -670,7 +687,8 @@
     <define name="RPR_AOV_LIGHT_GROUP2" value="0x19 "/>
     <define name="RPR_AOV_LIGHT_GROUP3" value="0x1a "/>
     <define name="RPR_AOV_DIFFUSE_ALBEDO" value="0x1b "/>
-    <define name="RPR_AOV_MAX" value="0x1c "/>
+    <define name="RPR_AOV_VARIANCE" value="0x1c "/>
+    <define name="RPR_AOV_MAX" value="0x1d "/>
   </group>
   <group name ="PostEffectType" prefix="RPR_POST_EFFECT_" type="rpr_post_effect_type">
     <define name="RPR_POST_EFFECT_TONE_MAP" value="0x0 "/>
@@ -748,32 +766,59 @@
 	<define name="RPR_COMPOSITE_LUT" value="0xe  "/>
   </group>
 
-  <comment>/*rpr_hetero_volume_parameter*/</comment>
-    <group name ="HeteroVolume" prefix="RPR_HETEROVOLUME_" type="rpr_hetero_volume_parameter">
-    <define name="RPR_HETEROVOLUME_SIZE_X" value="0x730 "/>
-    <define name="RPR_HETEROVOLUME_SIZE_Y" value="0x731 "/>
-    <define name="RPR_HETEROVOLUME_SIZE_Z" value="0x732 "/>
-    <define name="RPR_HETEROVOLUME_DATA" value="0x733 "/>
-    <define name="RPR_HETEROVOLUME_DATA_SIZEBYTE" value="0x734 "/>
-    <define name="RPR_HETEROVOLUME_TRANSFORM" value="0x735 "/>
-    <define name="RPR_HETEROVOLUME_INDICES" value="0x736 "/>
-    <define name="RPR_HETEROVOLUME_INDICES_NUMBER" value="0x737 "/>
-    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY" value="0x738 "/>
-	<define name="RPR_HETEROVOLUME_EMISSION" value="0x739 "/>
-	<define name="RPR_HETEROVOLUME_ALBEDO" value="0x73a "/>
-	<define name="RPR_HETEROVOLUME_FILTER" value="0x73b "/>
-  </group>
-  <group name ="HeteroVolumeIndicesTopology" prefix="RPR_HETEROVOLUME_INDICES_TOPOLOGY_" type="rpr_hetero_volume_indices_topology">
-    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY_I_U64" value="0x750 "/>
-    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY_XYZ_U32" value="0x751 "/>
-    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY_I_S64" value="0x752 "/>
-    <define name="RPR_HETEROVOLUME_INDICES_TOPOLOGY_XYZ_S32" value="0x753 "/>
+  
+  
+  
+  
+  
+  
+
+    <group name ="Grid" prefix="RPR_GRID_" type="rpr_grid_parameter">
+	<define name="RPR_GRID_SIZE_X" value="0x930 "/>
+	<define name="RPR_GRID_SIZE_Y" value="0x931 "/>
+	<define name="RPR_GRID_SIZE_Z" value="0x932 "/>
+	<define name="RPR_GRID_DATA" value="0x933 "/>
+	<define name="RPR_GRID_DATA_SIZEBYTE" value="0x934 "/>
+	<define name="RPR_GRID_INDICES" value="0x936 "/>
+	<define name="RPR_GRID_INDICES_NUMBER" value="0x937 "/>
+	<define name="RPR_GRID_INDICES_TOPOLOGY" value="0x938 "/>
   </group>
   
-   <group name ="HeteroVolumeFilter" prefix="RPR_HETEROVOLUME_FILTER_" type="rpr_hetero_volume_filter">
-    <define name="RPR_HETEROVOLUME_FILTER_NEAREST" value="0x760 "/>
-    <define name="RPR_HETEROVOLUME_FILTER_LINEAR" value="0x761 "/>
+   <group name ="HeteroVolume" prefix="RPR_HETEROVOLUME_" type="rpr_hetero_volume_parameter">
+	<define name="RPR_HETEROVOLUME_TRANSFORM" value="0x735 "/>
+	<define name="RPR_HETEROVOLUME_ALBEDO_V2" value="0x73c "/>
+	<define name="RPR_HETEROVOLUME_DENSITY_V2" value="0x73d "/>
+	<define name="RPR_HETEROVOLUME_EMISSION_V2" value="0x73e "/>
+	<define name="RPR_HETEROVOLUME_ALBEDO_LOOKUP_VALUES" value="0x73f "/>
+	<define name="RPR_HETEROVOLUME_ALBEDO_LOOKUP_VALUES_COUNT" value="0x740 "/>
+	<define name="RPR_HETEROVOLUME_DENSITY_LOOKUP_VALUES" value="0x741 "/>
+	<define name="RPR_HETEROVOLUME_DENSITY_LOOKUP_VALUES_COUNT" value="0x742 "/>
+	<define name="RPR_HETEROVOLUME_EMISSION_LOOKUP_VALUES" value="0x743 "/>
+	<define name="RPR_HETEROVOLUME_EMISSION_LOOKUP_VALUES_COUNT" value="0x744 "/>
+	<define name="RPR_HETEROVOLUME_ALBEDO_SCALE" value="0x745 "/>
+	<define name="RPR_HETEROVOLUME_DENSITY_SCALE" value="0x746 "/>
+	<define name="RPR_HETEROVOLUME_EMISSION_SCALE" value="0x747 "/>
   </group>
+  
+  
+  
+  <group name ="GridIndicesTopology" prefix="RPR_GRID_INDICES_TOPOLOGY_" type="rpr_grid_indices_topology">
+    <define name="RPR_GRID_INDICES_TOPOLOGY_I_U64" value="0x950 "/>
+    <define name="RPR_GRID_INDICES_TOPOLOGY_XYZ_U32" value="0x951 "/>
+    <define name="RPR_GRID_INDICES_TOPOLOGY_I_S64" value="0x952 "/>
+    <define name="RPR_GRID_INDICES_TOPOLOGY_XYZ_S32" value="0x953 "/>
+  </group>
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
    <group name ="Curve" prefix="RPR_CURVE_" type="rpr_curve_parameter">
     <define name="RPR_CURVE_CONTROLPOINTS_COUNT" value="0x830 "/>
@@ -815,6 +860,7 @@
   <typedef name="rpr_image" type="void *"/>
   <typedef name="rpr_buffer" type="void *"/>
   <typedef name="rpr_hetero_volume" type="void *"/>
+  <typedef name="rpr_grid" type="void *"/>
   <typedef name="rpr_curve" type="void *"/>
   <typedef name="rpr_framebuffer" type="void *"/>
   <typedef name="rpr_material_system" type="void *"/>
@@ -829,6 +875,7 @@
   <typedef name="rpr_context_type" type="rpr_uint"/>
   <typedef name="rpr_creation_flags" type="rpr_bitfield"/>
   <typedef name="rpr_aa_filter" type="rpr_uint"/>
+  <typedef name="rpr_context_sampler_type" type="rpr_uint"/>
   <typedef name="rpr_context_info" type="rpr_uint"/>
   <typedef name="rpr_camera_info" type="rpr_uint"/>
   <typedef name="rpr_image_info" type="rpr_uint"/>
@@ -871,9 +918,9 @@
   <typedef name="rpr_image_filter_type" type="rpr_uint"/>
   <typedef name="rpr_material_node_arithmetic_operation" type="rpr_uint"/>
   <typedef name="rpr_hetero_volume_parameter" type="rpr_uint"/>
+  <typedef name="rpr_grid_parameter" type="rpr_uint"/>
   <typedef name="rpr_curve_parameter" type="rpr_uint"/>
-  <typedef name="rpr_hetero_volume_indices_topology" type="rpr_uint"/>
-  <typedef name="rpr_hetero_volume_filter" type="rpr_uint"/>
+  <typedef name="rpr_grid_indices_topology" type="rpr_uint"/>
   <struct name="_rpr_image_desc" camelCaseName="ImageDesc" prefix ="image_">
     <declaration byte_align="4" byte_size="4" name="image_width" type="rpr_uint"/>
     <declaration byte_align="4" byte_size="4" name="image_height" type="rpr_uint"/>
@@ -934,7 +981,7 @@
     /** @brief Create rendering context
     *
     *  Rendering context is a root concept encapsulating the render states and responsible
-    *  for execution control. All the entities in FireRender are created for a particular rendering context.
+    *  for execution control. All the entities in Radeon ProRender are created for a particular rendering context.
     *  Entities created for some context can't be used with other contexts. Possible error codes for this call are:
     *
     *     RPR_ERROR_COMPUTE_API_NOT_SUPPORTED
@@ -949,7 +996,7 @@
     *  @param props           Context creation properties. Specifies a list of context property names and their corresponding values.
     *                         Each property name is immediately followed by the corresponding desired value.
     *                         The list is terminated with 0.
-    *  @param cache_path      Full path to kernel cache created by FireRender, NULL means to use current folder
+    *  @param cache_path      Full path to kernel cache created by Radeon ProRender, NULL means to use current folder
     *  @param cpu_thread_limit	Limit for the number of threads used for CPU rendering
     *  @param out_context		Pointer to context object
     *  @return                RPR_SUCCESS in case of success, error code otherwise
@@ -1370,7 +1417,7 @@
   <comment>
     /** @brief Create a mesh
     *
-    *  FireRender supports mixed meshes consisting of triangles and quads.
+    *  Radeon ProRender supports mixed meshes consisting of triangles and quads.
     *
     *  Possible error codes are:
     *
@@ -2198,13 +2245,12 @@
     *  @param  shape       The shape to set shadow flag for
     *  @param  visible     Determines if the shape casts shadow
     *  @return             RPR_SUCCESS in case of success, error code otherwise
+    *
+    * rprShapeSetShadow(shape, X) removed  -> replace it by   rprShapeSetVisibilityFlag(shape,RPR_SHAPE_VISIBILITY_SHADOW, X )
+    *
     */
   </comment>
-  <function name="rprShapeSetShadow" return_type="rpr_int">
-    <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
-    <arg byte_align="4" byte_size="4" name="casts_shadow" type="rpr_bool"/>
-  </function>
-  
+
   
   <comment>
     /** @brief Set light world transform
@@ -2333,6 +2379,14 @@
   <function name="rprHeteroVolumeGetInfo" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="heteroVol" type="rpr_hetero_volume"/>
     <arg byte_align="4" byte_size="4" name="heteroVol_info" type="rpr_hetero_volume_parameter"/>
+    <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
+    <arg byte_align="0" byte_size="0" name="data" type="void *"/>
+    <arg byte_align="0" byte_size="0" name="size_ret" is_out ="true" type="size_t *"/>
+  </function>
+  
+    <function name="rprGridGetInfo" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="grid" type="rpr_grid"/>
+    <arg byte_align="4" byte_size="4" name="grid_info" type="rpr_grid_parameter"/>
     <arg byte_align="8" byte_size="8" name="size" type="size_t"/>
     <arg byte_align="0" byte_size="0" name="data" type="void *"/>
     <arg byte_align="0" byte_size="0" name="size_ret" is_out ="true" type="size_t *"/>
@@ -3145,6 +3199,9 @@
     *      RPR_ERROR_OUT_OF_SYSTEM_MEMORY
     *      RPR_ERROR_OUT_OF_VIDEO_MEMORY
     *
+    * if normalizeOnly is TRUE : it only normalizes src_frame_buffer, and write the result in dst_frame_buffer.
+    * if normalizeOnly is FALSE : it applies all the rpr_post_process attached to the context with rprContextAttachPostEffect
+    *
     * Note: in RPR API 1.310, the default value of normalizeOnly has been removed.
     *       Set it to FALSE, if you don't use this argument.
     *
@@ -3291,12 +3348,12 @@
   
     <function name="rprContextCreateLUTFromFile" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
-    <arg byte_align="0" byte_size="0" name="fileLutPath" type="rpr_char const *"/>
+    <arg byte_align="0" byte_size="0" name="fileLutPath" type="const rpr_char *"/>
     <arg byte_align="0" byte_size="0" name="out_lut" is_out="true" type="rpr_lut *"/>
   </function>
    <function name="rprContextCreateLUTFromData" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
-	<arg byte_align="0" byte_size="0" name="lutData" type="rpr_char const *"/>
+	<arg byte_align="0" byte_size="0" name="lutData" type="const rpr_char *"/>
     <arg byte_align="0" byte_size="0" name="out_lut" is_out="true" type="rpr_lut *"/>
   </function>
   
@@ -3458,20 +3515,29 @@
   </function>
 
 
-  <function name="rprContextCreateHeteroVolume" return_type="rpr_int">
+  
+  
+  <function name="rprContextCreateGrid" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
-    <arg byte_align="0" byte_size="0" is_out="true" name="out_heteroVolume" type="rpr_hetero_volume *"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_grid" type="rpr_grid *"/>
     <arg byte_align="0" byte_size="0" name="gridSizeX" type="size_t"/>
     <arg byte_align="0" byte_size="0" name="gridSizeY" type="size_t"/>
     <arg byte_align="0" byte_size="0" name="gridSizeZ" type="size_t"/>
     <arg byte_align="0" byte_size="0" name="indicesList" type="void const *"/>
     <arg byte_align="0" byte_size="0" name="numberOfIndices" type="size_t"/>
-    <arg byte_align="0" byte_size="0" name="indicesListTopology" type="rpr_hetero_volume_indices_topology"/>
+    <arg byte_align="0" byte_size="0" name="indicesListTopology" type="rpr_grid_indices_topology"/>
     <arg byte_align="0" byte_size="0" name="gridData" type="void const *"/>
     <arg byte_align="0" byte_size="0" name="gridDataSizeByte" type="size_t"/>
     <arg byte_align="0" byte_size="0" name="gridDataTopology___unused" type="rpr_uint"/>
   </function>
+  
+  <function name="rprContextCreateHeteroVolume" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="context" type="rpr_context"/>
+    <arg byte_align="0" byte_size="0" is_out="true" name="out_heteroVolume" type="rpr_hetero_volume *"/>
+  </function>
 
+  
+  
   <function name="rprShapeSetHeteroVolume" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="shape" type="rpr_shape"/>
     <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
@@ -3483,23 +3549,53 @@
     <arg byte_align="0" byte_size="0" name="transform" type="rpr_float const *"/>
   </function>
   
-  <function name="rprHeteroVolumeSetEmission" return_type="rpr_int">
+
+  <function name="rprHeteroVolumeSetEmissionGrid" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
-    <arg byte_align="0" byte_size="0" name="r" type="rpr_float"/>
-    <arg byte_align="0" byte_size="0" name="g" type="rpr_float"/>
-	<arg byte_align="0" byte_size="0" name="b" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="grid" type="rpr_grid"/>
   </function>
   
-   <function name="rprHeteroVolumeSetAlbedo" return_type="rpr_int">
+  <function name="rprHeteroVolumeSetDensityGrid" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
-    <arg byte_align="0" byte_size="0" name="r" type="rpr_float"/>
-    <arg byte_align="0" byte_size="0" name="g" type="rpr_float"/>
-	<arg byte_align="0" byte_size="0" name="b" type="rpr_float"/>
+    <arg byte_align="0" byte_size="0" name="grid" type="rpr_grid"/>
   </function>
   
-  <function name="rprHeteroVolumeSetFilter" return_type="rpr_int">
+   <function name="rprHeteroVolumeSetAlbedoGrid" return_type="rpr_int">
     <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
-    <arg byte_align="0" byte_size="0" name="filter" type="rpr_hetero_volume_filter"/>
+    <arg byte_align="0" byte_size="0" name="grid" type="rpr_grid"/>
+  </function>
+  
+  <function name="rprHeteroVolumeSetEmissionLookup" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="ptr" type="rpr_float const *"/>
+    <arg byte_align="0" byte_size="0" name="n" type="rpr_uint"/>
+  </function>
+  
+  <function name="rprHeteroVolumeSetDensityLookup" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="ptr" type="rpr_float const *"/>
+    <arg byte_align="0" byte_size="0" name="n" type="rpr_uint"/>
+  </function>
+  
+   <function name="rprHeteroVolumeSetAlbedoLookup" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="ptr" type="rpr_float const *"/>
+    <arg byte_align="0" byte_size="0" name="n" type="rpr_uint"/>
+  </function>
+  
+  
+   <function name="rprHeteroVolumeSetAlbedoScale" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="scale" type="rpr_float"/>
+  </function>
+   <function name="rprHeteroVolumeSetEmissionScale" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="scale" type="rpr_float"/>
+  </function>
+   <function name="rprHeteroVolumeSetDensityScale" return_type="rpr_int">
+    <arg byte_align="0" byte_size="0" name="heteroVolume" type="rpr_hetero_volume"/>
+    <arg byte_align="0" byte_size="0" name="scale" type="rpr_float"/>
+
   </function>
   
 
